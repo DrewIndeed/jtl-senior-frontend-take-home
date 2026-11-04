@@ -28,13 +28,13 @@ A feature is the unit of ownership. The to-do form needs a user picker but must 
 - **Mock: MSW** runs at the network level, so the data layer is production code calling `fetch`. The same handlers serve the browser and the Vitest node server. An in-memory client would be simpler, but it skips the network boundary.
 - **Routing:** file-based TanStack Router with `autoCodeSplitting`. Loaders call `ensureQueryData` and prefetch the to-dos in parallel, so there's no waterfall. The `userId` param is parsed into the brand. A 404 shows `notFoundComponent`. `routeTree.gen.ts` is committed, so typecheck works on a clean clone.
 - **Cut to stay in the 4h box:** Playwright, a deploy, a failure panel (the URL flag is enough), design-system styling, and dependency-cruiser.
-- **Time:** planning and review took about 3h on 2026-11-04 (11:46–14:23 UTC+7, mostly agent work plus my decisions). The build, from repo creation to all checks green, ran 14:24–14:40 UTC+7 as an agent run that I directed and reviewed. Including docs it stays inside the 4h cap. The real timestamps are in `ai-journey/journal.md`.
+- **Time:** planning and plan review took about 3h on 2026-11-04 (11:46–14:23 UTC+7, agent work plus my decisions). The build ran from the first build commit `6930f67` (14:25) to `a39ce19` (14:34), as an agent run I directed and reviewed. A design/a11y review fix pass followed (first commit 14:43, see the journal for the end). Timestamps are from git; details are in `ai-journey/journal.md`.
 
 ## Reflection
 **Performance**
 - The server cache is the single source: stable query-key factories, a 30s `staleTime`, no server data in Jotai. Only components that read a query re-render when it changes.
 - Routes are code-split (`autoCodeSplitting`) and preloaded on link intent. Loaders start the user and to-do requests in parallel. Optimistic rows swap in place, so there's no list flash.
-- The MSW worker is the biggest chunk (~160 KB gz) and is demo-only. In production it would be dropped behind a build flag.
+- **Bundle (measured, `gzip -c`, entry + modulepreloaded chunks + CSS):** app only ≈ **139 KB gz** (JS 136 + CSS 3). With the mock ≈ **293 KB gz**, because `main.tsx` awaits the MSW worker (≈ 155 KB gz) before the first render in every build, so reviewers get the mock backend. A real deployment would gate the mock behind an env flag (e.g. `VITE_ENABLE_MOCKS`) so only the app-only number ships.
 
 **Testing (what I'd do for production)**
 - Done: an integration test of the key signal. Two overlapping creates, one fails, and the other must stay and be reconciled, with a single invalidation. Also an accessible validation test (messages tied by `aria-describedby`, focus on the first invalid field).
