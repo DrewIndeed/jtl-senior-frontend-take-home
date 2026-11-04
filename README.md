@@ -11,6 +11,38 @@ pnpm typecheck && pnpm lint && pnpm test && pnpm build
 ```
 To see the rollback, open `http://localhost:5173/todos?fail=todos.create` and add a to-do. The item appears straight away, the mock returns 500 after 600 ms, and only that item is removed. A status message is announced.
 
+## Requirements coverage
+Checked against [`senior-frontend-engineer/instructions.md`](senior-frontend-engineer/instructions.md) and the template's [AI journey section](TEMPLATE-README.md#ai-journey-required). §-refs are its headings.
+
+| Requirement | Status | Evidence |
+|---|---|---|
+| User: create a user by username (§The task) | ✅ met | [`users/new.tsx`](apps/web/src/routes/users/new.tsx), [`CreateUserForm.tsx`](packages/users/src/ui/CreateUserForm.tsx) |
+| User: detail view by ID (§The task) | ✅ met, with a 404 view for unknown IDs | [`users/$userId.tsx`](apps/web/src/routes/users/$userId.tsx), [`UserCard.tsx`](packages/users/src/ui/UserCard.tsx) |
+| To-do: create with title + assignee (§The task) | ✅ met | [`CreateTodoForm.tsx`](packages/todos/src/ui/CreateTodoForm.tsx), [`AssigneeField.tsx`](apps/web/src/components/AssigneeField.tsx) |
+| To-do: list all items for a given user (§The task) | ✅ met, on `/todos?assignee=` and the user page | [`todos.tsx`](apps/web/src/routes/todos.tsx), [`TodoList.tsx`](packages/todos/src/ui/TodoList.tsx) |
+| Turborepo with `apps/web` + `users`, `todos`, `shared` packages (§Monorepo structure) | ✅ met | [`turbo.json`](turbo.json), [`pnpm-workspace.yaml`](pnpm-workspace.yaml), [Why this split](#why-this-split) |
+| Features don't import each other; shared logic goes through `shared` (§Monorepo structure) | ✅ met, enforced by lint, not only by convention | [`eslint.config.js`](eslint.config.js) (`no-restricted-imports`), [`packages/shared/src/index.ts`](packages/shared/src/index.ts) |
+| Minimal turbo pipeline (§Monorepo structure) | ✅ met: build / typecheck / lint / test / dev, no caching work | [`turbo.json`](turbo.json) |
+| React + TypeScript + Vite (§Technical requirements) | ✅ met | [`vite.config.ts`](apps/web/vite.config.ts), [`tsconfig.base.json`](tsconfig.base.json) |
+| TanStack Router: routes, params, navigation (§Technical requirements) | ✅ met: file-based, `$userId` parsed to a branded id, code-split | [`routes/`](apps/web/src/routes/), [`router.tsx`](apps/web/src/router.tsx) |
+| TanStack Query with a mock backend; loading, error, caching (§Technical requirements) | ✅ met: MSW, loaders with `ensureQueryData`, 30s `staleTime` | [`handlers.ts`](apps/web/src/mocks/handlers.ts), [`query-client.ts`](packages/shared/src/query-client.ts), [`queries.ts`](packages/users/src/model/queries.ts) |
+| Optimistic create of a to-do with correct rollback (§Technical requirements) | ✅ met, per-item rollback; tested with two overlapping creates where one fails | [`useCreateTodo.ts`](packages/todos/src/model/useCreateTodo.ts), [`optimistic.ts`](packages/todos/src/model/optimistic.ts), [`optimistic-create.test.tsx`](apps/web/src/test/optimistic-create.test.tsx), `/todos?fail=todos.create` |
+| Jotai for at least one cross-cutting UI concern (§Technical requirements) | ✅ met: one atom, the "working as" user id; the URL wins | [`active-user.ts`](apps/web/src/state/active-user.ts), [`ActiveUserSelect.tsx`](apps/web/src/components/ActiveUserSelect.tsx) |
+| TailwindCSS, applied consistently (§Technical requirements) | ✅ met: Tailwind v4, zinc palette, one brand token | [`index.css`](apps/web/src/index.css), [`packages/shared/src/ui/`](packages/shared/src/ui/) |
+| Separation of business logic, data access, presentation (§Technical requirements) | ✅ met: `api/`, `model/`, `ui/` folders in each feature | [`packages/todos/src/`](packages/todos/src/), [`packages/users/src/`](packages/users/src/) |
+| Basic accessibility: semantic HTML, labels, keyboard (§Technical requirements) | ✅ met: labelled fields, focus management, live status; axe 0 violations on 4 pages in the last review round (not in CI) | [`Field.tsx`](packages/shared/src/ui/Field.tsx), [a11y review](ai-journey/reviews/uma-design-a11y-review.md), [extras review](ai-journey/reviews/uma-extras-review.md) |
+| Form validation with meaningful messages, choice justified (§Technical requirements) | ✅ met: Zod, messages tied with `aria-describedby`, focus on first invalid field | [`contracts.ts`](packages/shared/src/contracts.ts), [`validation.test.tsx`](apps/web/src/test/validation.test.tsx), [Key decisions](#key-decisions-and-trade-offs) |
+| Source code in the repository (§Deliverables) | ✅ met | this repo |
+| Short README: architecture, trade-offs, why this split (§Deliverables) | ⚠️ partial: everything is covered, but it is longer than half a page | [Why this split](#why-this-split), [Key decisions](#key-decisions-and-trade-offs) |
+| Reflection: performance (§Deliverables) | ✅ met | [Reflection](#reflection) |
+| Reflection: testing strategy (§Deliverables) | ✅ met as an outline; only 2 tests are implemented, and the [extra] features have none | [Reflection](#reflection), [`apps/web/src/test/`](apps/web/src/test/) |
+| Install and run instructions (§Deliverables) | ✅ met | [Run it](#run-it) |
+| `ai-journey/`: plan, key prompts, tools, overrides (§Deliverables, AI journey) | ✅ met | [`plan.md`](ai-journey/plan.md), [`prompts.md`](ai-journey/prompts.md), [`toolchain.md`](ai-journey/toolchain.md), [`judgment.md`](ai-journey/judgment.md), [`decisions.md`](ai-journey/decisions.md), [`journal.md`](ai-journey/journal.md), [`reviews/`](ai-journey/reviews/) |
+| Time box of 2–4 hours (§Time box) | ⚠️ partial: the core build stayed inside the box, but planning plus the [extra] pass went past 4h of wall-clock time | [Key decisions → Time](#key-decisions-and-trade-offs), [`journal.md`](ai-journey/journal.md) |
+| E2E tests (Playwright) | ✂️ cut to stay in the time box; outlined only | [Reflection](#reflection) |
+| Hosted deploy | ✂️ cut, not asked for (CI/CD is out of scope per §What you do NOT need to do) | — |
+| Bundle size | ⚠️ measured, but there is no budget gate. Measured 2026-11-04 16:28 UTC+7 at a562a89, gzipped entry + preloaded chunks + CSS: app only ≈ 146 KB; with the MSW worker ≈ 305 KB. The Reflection's 139 / 293 KB figures are from 14:45, before the [extra] pass | [Reflection](#reflection) |
+
 ## Why this split
 | Package | Owns | May import |
 |---|---|---|
