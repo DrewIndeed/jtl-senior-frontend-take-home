@@ -8,7 +8,7 @@ export function ActiveUserSelect() {
   const [activeUserId, setActiveUserId] = useAtom(activeUserIdAtom)
   const id = useId()
   return (
-    <div className="flex items-center gap-2 text-sm">
+    <div className="flex w-full items-center gap-3 text-sm sm:w-auto">
       <label htmlFor={id}>Working as</label>
       <UserSelect id={id} placeholder="Nobody" value={activeUserId ?? ''}
         onChange={(e) => setActiveUserId((e.target.value || null) as UserId | null)} />
