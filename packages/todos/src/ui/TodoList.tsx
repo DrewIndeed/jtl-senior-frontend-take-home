@@ -17,9 +17,17 @@ export function TodoList({ assigneeId, headingId }: { assigneeId: UserId; headin
     <ul aria-labelledby={headingId} className="flex flex-col gap-2">
       {data.map((t) => (
         <li key={t.id} aria-busy={t.pending ? true : undefined}
-          className={`flex items-center justify-between rounded border border-slate-200 bg-white px-3 py-2 ${t.pending ? 'opacity-60' : ''}`}>
-          <span>{t.title}</span>
-          {t.pending && <span className="text-xs text-slate-600">Saving…</span>}
+          className={`flex items-center justify-between rounded border bg-white px-3 py-2 ${t.pending ? 'border-dashed border-slate-300 text-slate-500' : 'border-slate-200'}`}>
+          <span className={t.pending ? 'text-slate-700' : undefined}>
+            {t.title}
+            {t.pending && <span className="sr-only"> (saving)</span>}
+          </span>
+          {t.pending && (
+            <span aria-hidden="true" className="flex items-center gap-2 text-xs">
+              <span className="size-2 animate-pulse rounded-full bg-blue-600" />
+              Saving…
+            </span>
+          )}
         </li>
       ))}
     </ul>
