@@ -1,4 +1,4 @@
-import { useState, type ReactNode } from 'react'
+import { useEffect, useRef, useState, type ReactNode } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { alertBoxClass, Button, isDev, type TodoStatus, type UserId } from '@jtl/shared'
 import { todosByAssigneeQueryOptions, type TodoRow } from '../model/keys'
@@ -6,7 +6,7 @@ import { useCreateTodo } from '../model/useCreateTodo'
 import { useDeleteTodo, useToggleTodo } from '../model/useTodoWrites'
 
 type Counts = Record<TodoStatus, number>
-type Notice = { kind: 'deleted'; todo: TodoRow } | { kind: 'error'; text: string } | null
+type Notice = { kind: 'deleted'; todo: TodoRow; index: number } | { kind: 'error'; text: string; detail?: string } | null
 
 type Props = {
   assigneeId: UserId
@@ -22,6 +22,22 @@ export function TodoList({ assigneeId, headingId, status = 'all', renderFilter }
   const remove = useDeleteTodo()
   const recreate = useCreateTodo()
   const [notice, setNotice] = useState<Notice>(null)
+  const [focusId, setFocusId] = useState<string | null>(null)
+  const undoRef = useRef<HTMLButtonElement>(null)
+  const checkboxRefs = useRef(new Map<string, HTMLInputElement>())
+
+  // Focus management: Undo after a delete; the restored row's checkbox after Undo or a failed delete.
+  useEffect(() => {
+    if (notice?.kind === 'deleted') undoRef.current?.focus()
+  }, [notice])
+  useEffect(() => {
+    if (!focusId) return
+    const el = checkboxRefs.current.get(focusId)
+    if (el) {
+      el.focus()
+      setFocusId(null)
+    }
+  }, [focusId, data])
 
   if (isPending) return <ul aria-busy="true" aria-labelledby={headingId} className="flex flex-col gap-2">{[0, 1, 2].map((i) => <li key={i} className="h-12 animate-pulse rounded bg-zinc-200" />)}</ul>
   if (isError)
@@ -36,26 +52,36 @@ export function TodoList({ assigneeId, headingId, status = 'all', renderFilter }
   const rows = status === 'all' ? data : data.filter((t) => (status === 'done' ? t.done : !t.done))
 
   const onToggle = (t: TodoRow) =>
-    toggle.mutate(t, { onError: (e) => setNotice({ kind: 'error', text: `Couldn’t update “${t.title}”. We put it back.${isDev ? ` ${e.message}` : ''}` }) })
+    toggle.mutate(t, { onError: (e) => setNotice({ kind: 'error', text: `Couldn’t update “${t.title}”. We put it back.`, detail: e.message }) })
   const onDelete = (t: TodoRow) => {
-    setNotice({ kind: 'deleted', todo: t })
-    remove.mutate(t, { onError: () => setNotice({ kind: 'error', text: `Couldn’t delete “${t.title}”. We put it back.` }) })
+    setNotice({ kind: 'deleted', todo: t, index: Math.max(data.findIndex((r) => r.id === t.id), 0) })
+    remove.mutate(t, {
+      onError: (e) => {
+        setNotice({ kind: 'error', text: `Couldn’t delete “${t.title}”. We put it back.`, detail: e.message })
+        setFocusId(t.id)
+      },
+    })
   }
-  // Undo after the server already deleted: re-create it (new id). Simple and honest; see README.
-  const onUndo = (t: TodoRow) => {
+  // Undo after the server already deleted: re-create it at its old index (new id, open again; see README).
+  const onUndo = (n: { todo: TodoRow; index: number }) => {
     setNotice(null)
-    recreate.mutate({ title: t.title, assigneeId: t.assigneeId })
+    recreate.mutate({ title: n.todo.title, assigneeId: n.todo.assigneeId, index: n.index }, { onSuccess: (todo) => setFocusId(todo.id) })
   }
 
   return (
     <div className="flex flex-col gap-3">
       {renderFilter?.(counts)}
-      {notice?.kind === 'error' && <p role="alert" className={alertBoxClass}>{notice.text}</p>}
+      {notice?.kind === 'error' && (
+        <p role="alert" className={alertBoxClass}>
+          {notice.text}
+          {isDev && notice.detail && <span className="block text-xs">Server: {notice.detail}</span>}
+        </p>
+      )}
       <p role="status" aria-live="polite" className="flex min-h-6 items-center gap-2 text-sm text-zinc-700">
         {notice?.kind === 'deleted' && (
           <>
             Deleted “{notice.todo.title}”.
-            <button type="button" className="min-h-11 rounded px-2 font-medium text-brand underline focus-visible:outline-2 focus-visible:outline-brand" onClick={() => onUndo(notice.todo)}>
+            <button ref={undoRef} type="button" className="min-h-11 rounded px-2 font-medium text-brand underline focus-visible:outline-2 focus-visible:outline-brand" onClick={() => onUndo(notice)}>
               Undo
             </button>
           </>
@@ -72,7 +98,10 @@ export function TodoList({ assigneeId, headingId, status = 'all', renderFilter }
             <li key={t.id} aria-busy={t.pending ? true : undefined}
               className={`flex items-center gap-3 rounded border bg-white px-3 py-1 ${t.pending ? 'border-dashed border-zinc-300 text-zinc-500' : 'border-zinc-200'}`}>
               <label className="flex min-h-11 flex-1 items-center gap-3">
-                <input type="checkbox" className="size-5 accent-brand" checked={t.done} disabled={t.pending} onChange={() => onToggle(t)} />
+                <span className="-m-2 inline-flex p-2">
+                  <input type="checkbox" className="size-5 accent-brand" checked={t.done} disabled={t.pending} onChange={() => onToggle(t)}
+                    ref={(el) => { if (el) checkboxRefs.current.set(t.id, el); else checkboxRefs.current.delete(t.id) }} />
+                </span>
                 <span className={t.done ? 'text-zinc-500 line-through' : t.pending ? 'text-zinc-700' : undefined}>
                   {t.title}
                   {t.pending && <span className="sr-only"> (saving)</span>}
