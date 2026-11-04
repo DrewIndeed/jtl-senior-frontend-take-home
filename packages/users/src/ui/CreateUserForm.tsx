@@ -17,7 +17,14 @@ export function CreateUserForm({ onCreated }: { onCreated: (user: User) => void 
       return
     }
     setErrors({})
-    mutation.mutate(parsed.data, { onSuccess: onCreated })
+    mutation.mutate(parsed.data, {
+      onSuccess: onCreated,
+      // Server-side errors (e.g. 409 username taken) belong to the field, so aria-invalid and focus follow.
+      onError: (err) => {
+        setErrors({ username: err.message })
+        inputRef.current?.focus()
+      },
+    })
   }
 
   return (
@@ -28,7 +35,6 @@ export function CreateUserForm({ onCreated }: { onCreated: (user: User) => void 
             onChange={(e) => setUsername(e.target.value)} />
         )}
       </Field>
-      {mutation.isError && <p role="alert" className="text-sm text-red-700">{mutation.error.message}</p>}
       <Button type="submit" disabled={mutation.isPending}>{mutation.isPending ? 'Creating…' : 'Create user'}</Button>
     </form>
   )
