@@ -2,7 +2,8 @@
 
 | Tool | What it was for |
 |---|---|
-| **AI assistant agents** (a multi-agent setup I direct from chat) | **Planning agent:** read the brief, wrote the plan, the planning journal and the Decision Guide. **Engineering agent:** technical review of the plan, then the build (scaffold, code, tests, docs, commits). **Design-review agent:** design and a11y review passes. Each agent works from files in a shared workspace. I approve plans and decisions in chat. |
+| **Grok Bot agents** (my own team of AI agents that I direct from chat; I name the product, not an underlying model, because I can't verify which model it runs) | **Cris (chief of staff):** read the brief, wrote the plan, the planning journal and the Decision Guide, and coordinated the other agents. **Sofia (software engineer):** technical review of the plan, then the build on my own Mac with a shell and git (scaffold, code, tests, docs, signed commits). **Uma (UI/UX expert):** batched design and a11y review passes. Each agent works from files in a shared workspace. I approve plans and decisions in chat. |
+| **Playwright + axe-core** (scripts on the agents' workspace, not in this repo) | A scripted 23-step click-through of the running app, 390 and 1440 px screenshots for the design reviews, and the axe checks quoted in the README. |
 | **Context7 MCP server** | Official docs lookups: TanStack Query optimistic updates, TanStack Router file-based routing and plugin options, MSW setup, pnpm hoisting settings. Used to fact-check the decision records. |
 | **npm registry** (`npm view … dist-tags / versions / time / peerDependencies`) | Checked that jotai 3 and msw 3 exist, their release dates, peer and engine ranges, and the latest versions to pin. Found the TypeScript 7 vs typescript-eslint peer conflict. |
 | **Node scratch script** against `@tanstack/query-core` 5.105.3 | Empirically checked what `isMutating()` returns inside `onSettled` (see `judgment.md`). |
