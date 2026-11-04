@@ -10,14 +10,16 @@ These are in the order I gave them. **[real]** prompts are my own words, transla
 5. **[real]** "1. What is routeTree.gen.ts? 2. '(TkDodo's blog pattern, not checked against official docs)'? Repo: doesn't matter. Hosted demo: doesn't matter. platform-ui-react: they don't ask for it, don't care. Todo list: both then, as Sofia decided. Going over 2–4h: no. Does the no-AI rule cover the presentation? Yes: help with the code, but guide me for the presentation."
 6. **[real]** "We submit whenever we're done; that's not a problem."
 
+_Decisions by Andrew in prompts 5–6: no hosted demo/deploy, no Platform UI package, to-do list in both places, hard 4h cap (no going over), no AI for the presentation, submit when done._
+
 ## Technical review (code-review agent)
 7. **[reconstructed]** "Review this plan as a senior frontend engineer before I approve it. Is the stack right for a 2–4h scope? Should I pin jotai/msw 3 or 2.x? Check on npm. Is the optimistic rollback correct when two creates overlap? Fact-check the decision records against the official docs via Context7. What's missing or risky?"
-8. **[real]** "'Not checked against official docs'? Check it against them now." → the `isMutating === 1` rule was verified by a script against query-core 5.105.3 (`reviews/sofia-plan-review.md` §6).
+8. **[real]** "'Not checked against official docs'? Check it against them now." → _Requested by Andrew:_ the `isMutating === 1` rule was verified by a script against query-core 5.105.3 (`reviews/sofia-plan-review.md` §6).
 
 ## Build (code agent on my machine)
 9. **[real]** "I approve the plan, go ahead. My home machine is still on, so just use it for speed. Remember this part: 'An ai-journey/ folder documenting how you used AI … This is required and weighs significantly in the evaluation.' I know you'll mostly automate things, so there won't be many key prompts. Where I have no prompt, write the English prompt yourself to fill the 'key prompts'. And remember to log all the changes, the code, the steps and the decisions fully, so I understand."
 10. **[real]** "Remember to clone the repo so I can view it in GitHub Desktop."
-11. **[real, relayed]** "I'm watching from my work machine. Push after every commit or small batch, and update the journal as you go."
+11. **[real, relayed]** "[…] Push after every commit or small batch, and update the journal as you go."
 12. **[reconstructed]** "Scaffold a pnpm + Turborepo workspace with exact pins only, a minimal turbo.json and strict TS. Add an ESLint flat config where each feature package fails lint if it imports the other feature."
 13. **[reconstructed]** "Create @jtl/shared with contracts only: a branded UserId, zod schemas with human error messages, a fetch helper that zod-parses every response, and a QueryClient factory that doesn't retry 4xx. No feature logic."
 14. **[reconstructed]** "Build the todos feature. The optimistic create inserts a temp-id row, rolls back only that row on error, swaps it in place on success, and invalidates only when the last create settles (isMutating === 1 inside the useMutation options onSettled). Keep the list helpers pure so they're testable."
@@ -29,5 +31,5 @@ These are in the order I gave them. **[real]** prompts are my own words, transla
 18. **[reconstructed]** "Apply Uma's batched design and a11y review in one pass: the P0s first (Tailwind not scanning packages, the 409 error on the field with focus, a clear rollback alert), then the P1s and the cheap optional items. Keep the commits small, keep the tests green, push once at the end, and log the review, the fixes and what the AI missed."
 
 ## Extras (minimal)
-19. **[real, translated]** "Then just do it minimalist."
-20. **[reconstructed]** "Add only: PATCH/DELETE to-do and DELETE user (cascade) in MSW with fail flags; an optimistic toggle checkbox and delete with per-item rollback and a simple Undo in the existing status area; user delete behind a native <dialog>, with cross-feature cleanup in apps/web and the active user cleared; a URL ?status= filter with counts; slate→zinc plus one brand token. No new tests, no toasts, push once."
+19. **[real, translated]** "Then just do it minimalist." _Decision by Andrew: extras beyond the brief stay minimal (D25)._
+20. **[reconstructed]** "Add only: PATCH/DELETE to-do and DELETE user (cascade) in MSW with fail flags; an optimistic toggle checkbox and delete with per-item rollback and a simple Undo in the existing status area; user delete behind a native &lt;dialog&gt;, with cross-feature cleanup in apps/web and the active user cleared; a URL ?status= filter with counts; slate→zinc plus one brand token. No new tests, no toasts, push once."

@@ -1,7 +1,7 @@
 _Technical review of the plan by the code-review agent, written before any code. Shared as-is._
 
-# JTL take-home plan: tech review (Sofia)
-Date: 2026-11-04 (UTC+7). Review only, no code. Sources: `repo/senior-frontend-engineer/instructions.md`, PLAN.md, GUIDE.md, npm registry (queried today), and Context7 (TanStack Query, TanStack Router, MSW, pnpm docs).
+# JTL take-home plan: tech review
+Date: 2026-11-04 (UTC+7). Review only, no code. Sources: `senior-frontend-engineer/instructions.md`, the plan (`plan.md`), the planning Decision Guide, npm registry (queried today), and Context7 (TanStack Query, TanStack Router, MSW, pnpm docs).
 Tags: **[verified]** = checked today; **[unverified]** = my judgment or not checked against a source.
 
 ## 1. Stack fit for 2–4h: **Keep everything; cut extras, not tools**
@@ -13,6 +13,7 @@ Tags: **[verified]** = checked today; **[unverified]** = my judgment or not chec
 
 ## 2. Versions: **jotai 3 and msw 3 exist and are `latest`; pin 3.x for jotai, pin msw 2.15.0 unless you want to learn v3 now**
 npm registry today [verified]:
+
 | Package | latest | notes |
 |---|---|---|
 | jotai | 3.0.1 (3.0.0 on 2026-09-08) | last 2.x = 2.20.3; peer react >=18; engines node >=22.12 |
@@ -62,11 +63,12 @@ Fixes:
 - **Open questions for Andrew:** msw 2.15 vs 3 (my rec: 2.15.0); commit `routeTree.gen.ts` (rec: yes).
 
 ## 6. Addendum (2026-11-04 12:55 UTC+7): `isMutating({ mutationKey }) === 1` in onSettled
+_Requested by Andrew after reading §3 ("'Not checked against official docs'? Check it against them now.")._
 **Verdict: works (tested), with a caveat. The official docs don't show this pattern; it's community guidance.** It's correct only in the **useMutation options `onSettled`**. In a **`mutate(vars, { onSettled })`** callback the count has already dropped, so the check must be `=== 0`.
 
 **Docs:** the React optimistic-updates guide (opened) shows only the snapshot/rollback and the `variables`/`useMutationState` approach, with an unconditional invalidate in `onSettled`. It does not show the `isMutating` guard and just links "the guide by TkDodo on Concurrent Optimistic Updates" under Further reading. Link: https://tanstack.com/query/latest/docs/framework/react/guides/optimistic-updates
 
-**Empirical test:** `@tanstack/query-core@5.105.3` (npm latest today), Node script `/tmp/qtest/t.mjs`, MutationObserver with the same `mutationKey`, A fails after 20ms, B succeeds after 50ms:
+**Empirical test:** `@tanstack/query-core@5.105.3` (npm latest today), a Node scratch script, MutationObserver with the same `mutationKey`, A fails after 20ms, B succeeds after 50ms:
 ```
 single:  options.onSettled isMutating=1 | mutate().onSettled isMutating=0
 overlap: A options.onSettled=2 | A mutate().onSettled=1

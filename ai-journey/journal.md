@@ -12,7 +12,7 @@ Every build step in order. Times are UTC+7. Hashes are the commits on `main`.
 | ~12:10 | The code-review agent reviewed the plan (`reviews/sofia-plan-review.md`). Verdicts: keep the required stack and cut the extras; pin msw 2.15.0; fix the optimistic pattern (temp id + keys returned from onMutate, last-settle invalidate); "autoSplit" is really `autoCodeSplitting`; pnpm doesn't block declared deps. |
 | 12:18 | I chose msw 2.15.0 and committing `routeTree.gen.ts`. |
 | 12:51 | I answered the open questions: hard 4h cap, plain Tailwind, to-do list in both places, no deploy, presentation without AI. |
-| 12:55 | `isMutating === 1` verified with a script against query-core 5.105.3; not in the official docs (`reviews/sofia-plan-review.md` §6). |
+| 12:55 | At my request ("check it against [the official docs] now", prompt 8): `isMutating === 1` verified with a script against query-core 5.105.3; not in the official docs (`reviews/sofia-plan-review.md` §6). |
 | 14:23 | I approved plan v2.1. |
 
 ## Build
@@ -45,7 +45,7 @@ Every build step in order. Times are UTC+7. Hashes are the commits on `main`.
 | 14:34 | — | Clean re-run from an empty `node_modules`: `pnpm install --frozen-lockfile` ✅, `pnpm typecheck` ✅ 4/4, `pnpm lint` ✅ 4/4, `pnpm test` ✅ 2/2, `pnpm build` ✅. | Final verification before push. |
 | 14:34 | — | **Cut:** Playwright (not trivially cheap: browser download plus config), deploy, failure panel, design-system look. **Not verified by hand:** clicking through the UI in a real browser, including the `?fail=` flow (verified only by the automated tests and the dev-server boot). | Honest scope. |
 
-## Design review fix pass (Uma's single batched review, applied in one pass)
+## Design review fix pass (one batched design-review agent review, applied in one pass)
 _Times below are git commit times. The earlier rows above at 14:38/14:40 were corrected to 14:34, the time of the last build commit `a39ce19`._
 
 | Time | Commit | What changed | Why |
@@ -74,11 +74,11 @@ _Times below are git commit times. The earlier rows above at 14:38/14:40 were co
 | 15:02 | 680e824 | `StatusFilter`, `?status=` on `/todos` and `/users/$userId`; cascade cleanup + atom clear in the app. |
 | 15:03 | 90d309c, ab5bf45 | Plain danger button in the dialog; slate → zinc, `--color-brand`. |
 
-## Extras review fix pass (Uma round 3)
+## Extras review fix pass (design review round 3)
 | Time | Commit | What changed |
 |---|---|---|
-| 15:06 | 61b2729 | Raw toggle error only in dev (added by the coordinating agent). |
+| 15:06 | 61b2729 | Raw toggle error only in dev (added by the planning agent). |
 | 15:15 | fc12244 … 66da0cd | Original-index restore, focus management, form status clearing, dialog refocus, exact status tabs + segmented control, Home delete confirmation. See `reviews/uma-extras-review.md`. |
-| 15:17 | e2d5f98, cb30efc | Follow-ups found by the box click-through: "Added" arriving after a delete started; exact search match on tabs. |
-| 15:55 | 7283cc4, 2d18dda | Uma r4, filter visuals: solid active tab with plain counts; heading, picker and tabs in one toolbar row; Undo status line moved below the list (sr-only when empty, still mounted); "Working as" as an identity chip. Checked with the box click-through (23/23), axe (0 violations) and r5 screenshots at 1440/390. |
-| 16:05–16:06 | 0cc0559, 29e4291, a1c239a | Uma r5, controls: shared `Select` in @jtl/shared (native select, custom chevron, md h-10 / sm h-9); inputs and the primary button at h-10; compact "Show to-dos for" select in the toolbar row; "Working as" chip with an avatar initial. Uma's `text-zinc-500` label failed axe contrast (4.39:1) on zinc-100, so it uses zinc-600. Click-through 23/23, axe 0 violations on 4 pages. |
+| 15:17 | e2d5f98, cb30efc | Follow-ups found by the agent's scripted browser click-through: "Added" arriving after a delete started; exact search match on tabs. |
+| 15:55 | 7283cc4, 2d18dda | Design review round 4, filter visuals (started from my own feedback that the filters were confusing): solid active tab with plain counts; heading, picker and tabs in one toolbar row; Undo status line moved below the list (sr-only when empty, still mounted); "Working as" as an identity chip. Checked with the agent's scripted click-through (23/23), axe (0 violations) and screenshots at 1440/390. |
+| 16:05–16:06 | 0cc0559, 29e4291, a1c239a | Design review round 5, controls (started from my feedback that the dropdowns were too tall): shared `Select` in @jtl/shared (native select, custom chevron, md h-10 / sm h-9); inputs and the primary button at h-10; compact "Show to-dos for" select in the toolbar row; "Working as" chip with an avatar initial. The reviewer's suggested `text-zinc-500` label failed axe contrast (4.39:1) on zinc-100, so it uses zinc-600. Scripted click-through 23/23, axe 0 violations on 4 pages. |

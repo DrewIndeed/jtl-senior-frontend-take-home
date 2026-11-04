@@ -1,4 +1,4 @@
-# Design and a11y review (Uma, UI/UX agent): one batched pass
+# Design and a11y review (UI/UX agent): one batched pass
 
 **Method:** screenshots at 390 and 1440 px of `/`, `/users/new`, `/users/u1`, `/todos`, `/todos?assignee=…`, an unknown user, the 409 duplicate username, the optimistic pending row and the `?fail=` rollback, plus keyboard tab order and axe on every page.
 

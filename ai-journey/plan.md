@@ -1,13 +1,13 @@
 # Plan (as approved, v2.1)
 
-_Shared as-is from the planning workspace, except that recruiter names and the email draft were removed for privacy. "Sofia" and "Uma" are Grok Bot assistant agents I use for code review and design review. "Cris" is my chief-of-staff agent, which drafted the plan._
+_Shared from the planning workspace. Recruiter names and the email draft were removed for privacy, and the AI agents are referred to by role: the planning agent drafted the plan, the engineering agent reviewed it and later built the app, and the design-review agent did the UI/a11y passes. All decisions marked "Andrew" are mine._
 
 # JTL Senior Frontend take-home: strategic plan (DRAFT v2, needs Andrew's approval)
 
 _v2.1 12:51–12:52: Andrew answered §10 (deadline: submit when done, hard limit ≈ Wed 11-11 09:47 UTC+7; 4 h hard cap, plain Tailwind, todo list in both places, presentation without AI)._
-_v2 2026-11-04 12:18 UTC+7: Sofia (code-review agent)'s technical review applied; msw 2.15.0 and committing `routeTree.gen.ts` decided (Andrew's choice via Sofia, 12:18)._
+_v2 2026-11-04 12:18 UTC+7: the engineering agent's technical review applied; msw 2.15.0 and committing `routeTree.gen.ts` decided (Andrew's choice on the engineering agent's recommendation, 12:18)._
 
-Sources: `repo/senior-frontend-engineer/instructions.md`, `repo/README.md`, the invitation email (2026-11-04), and JTL's public docs and job post (cited in JOURNAL.md). Nothing below adds requirements. Anything beyond the spec is labelled **[extra]**.
+Sources: `senior-frontend-engineer/instructions.md`, the template `README.md`, the invitation email (2026-11-04), and JTL's public docs and job post. Nothing below adds requirements. Anything beyond the spec is labelled **[extra]**.
 
 ## 1. Task in one paragraph
 Build a Vite + React + TS app in a **Turborepo** with two features:
@@ -37,12 +37,12 @@ Time box: 2–4 h. Don't gold-plate. Submit a template-created repo link by repl
 | AI journey | See §6. |
 
 ## 3. Distinctive ideas (cheap, tied to graded signals, not gimmicks)
-1. **"Break the network" URL toggle [extra].** The MSW handler reads `?fail=todos.create` (from the request referrer/URL or a module flag, never Jotai). A reviewer can watch the optimistic item appear, then roll back, in 5 seconds. Paired with per-item reconciliation that survives two overlapping creates. *(Dev failure panel cut per Sofia's review.)*
-2. **Boundaries enforced like a platform template [extra].** ESLint `no-restricted-imports` (enough at this size, per Sofia) plus each package `exports` only `index.ts`, so an illegal `todos → users` import fails `turbo lint`. Turborepo boundaries / dependency-cruiser are mentioned as the "at 10 features" answer, not built.
-3. **An exemplary AI journey** (plan, journal, prompts, toolchain, Uma (design-review agent)/Sofia reviews, "AI was wrong, I overrode it" log). The D-records (decision log) live in `ai-journey/`, not the README.
-- **Cut (Sofia's review):** Platform UI look, Vercel deploy, dev failure panel, separate mock package, dependency-cruiser. Plain Tailwind.
+1. **"Break the network" URL toggle [extra].** The MSW handler reads `?fail=todos.create` (from the request referrer/URL or a module flag, never Jotai). A reviewer can watch the optimistic item appear, then roll back, in 5 seconds. Paired with per-item reconciliation that survives two overlapping creates. *(Dev failure panel cut per the technical review.)*
+2. **Boundaries enforced like a platform template [extra].** ESLint `no-restricted-imports` (enough at this size, per the technical review) plus each package `exports` only `index.ts`, so an illegal `todos → users` import fails `turbo lint`. Turborepo boundaries / dependency-cruiser are mentioned as the "at 10 features" answer, not built.
+3. **An exemplary AI journey** (plan, journal, prompts, toolchain, design and technical reviews, "AI was wrong, I overrode it" log). The D-records (decision log) live in `ai-journey/`, not the README.
+- **Cut (technical review):** Platform UI look, Vercel deploy, dev failure panel, separate mock package, dependency-cruiser. Plain Tailwind.
 
-## 4. Stack: exact pins (no `^`), per Sofia's npm check 2026-11-04
+## 4. Stack: exact pins (no `^`), per the engineering agent's npm check 2026-11-04
 | Package | Pin |
 |---|---|
 | turbo | 2.11.10 |
@@ -52,14 +52,14 @@ Time box: 2–4 h. Don't gold-plate. Submit a template-created repo link by repl
 | @tanstack/router-plugin | 1.168.48 |
 | @tanstack/react-query | 5.105.3 |
 | jotai | 3.0.1 |
-| msw | **2.15.0** (decided: Andrew's choice via Sofia, 12:18; Sofia's rec, v3 changes API e.g. `onUnhandledRequest` → `onUnhandledFrame`) |
+| msw | **2.15.0** (decided: Andrew's choice on the engineering agent's recommendation, 12:18; agent's rec, v3 changes API e.g. `onUnhandledRequest` → `onUnhandledFrame`) |
 | tailwindcss | 4.3.4 |
 | zod | 4.6.7 |
 | vitest | 5.1.0 |
 | @playwright/test | 1.64.1 (only if under budget) |
 
 - Root `package.json`: `packageManager` field for pnpm, `engines.node >=22.12` (jotai 3 and msw 3 require it). Node version stated in README + `.nvmrc`.
-- At scaffold, check `@tanstack/router-plugin` and `@vitejs/plugin-react` work with Vite 8 (Sofia: unverified).
+- At scaffold, check `@tanstack/router-plugin` and `@vitejs/plugin-react` work with Vite 8 (agent: unverified).
 - `turbo.json`: minimal build/lint/dev (+test). Jotai: one atom.
 
 ## 5. Structure
@@ -71,16 +71,16 @@ packages/todos/   api, model, ui, index.ts (only export)
 ```
 4 packages, no 5th. Mocks are an app concern in `apps/web/src/mocks`; if feature tests ever need them, a `packages/mock-api` devDependency only, never `shared`.
 
-- **Router:** `tanstackRouter()` before `react()` in Vite plugins; `autoCodeSplitting: true`. `routeTree.gen.ts` is **committed** (decided: Andrew's choice via Sofia, 12:18) and excluded from lint/format. Param `userId` parsed with zod in `params.parse`; invalid id → `notFound()`. A loader that uses `search` passes it via `loaderDeps`. Add `pendingComponent` (skeleton) and `notFoundComponent`.
-- **Optimistic create (with Sofia's 3 fixes):**
+- **Router:** `tanstackRouter()` before `react()` in Vite plugins; `autoCodeSplitting: true`. `routeTree.gen.ts` is **committed** (decided: Andrew's choice on the engineering agent's recommendation, 12:18) and excluded from lint/format. Param `userId` parsed with zod in `params.parse`; invalid id → `notFound()`. A loader that uses `search` passes it via `loaderDeps`. Add `pendingComponent` (skeleton) and `notFoundComponent`.
+- **Optimistic create (with the review's 3 fixes):**
   1. Generate the temp id in `onMutate` and return it (`return { tempId, key }`); `onError` removes by id via `setQueryData(key, old => old?.filter(t => t.id !== tempId))`. No reliance on variables equality.
   2. Write to the right key(s): `todoKeys.byAssignee(assigneeId)` (and the `/todos` list key if different); rollback touches the same keys, captured in the returned result.
-  3. Invalidate only when the last mutation settles: `mutationKey: todoKeys.create()`, and in `onSettled` `if (client.isMutating({ mutationKey }) === 1) invalidateQueries(...)` (pattern from TkDodo's "Concurrent Optimistic Updates" blog; verified empirically by Sofia on v5.105.3; no official doc covers it; guarded by test).
+  3. Invalidate only when the last mutation settles: `mutationKey: todoKeys.create()`, and in `onSettled` `if (client.isMutating({ mutationKey }) === 1) invalidateQueries(...)` (pattern from TkDodo's "Concurrent Optimistic Updates" blog; verified empirically on v5.105.3 at Andrew's request; no official doc covers it; guarded by test).
      - **Only in the `useMutation` options `onSettled`** (keep the logic there). Inside `mutate(vars, { onSettled })` it would need `=== 0`.
-     - Evidence (Sofia, script against `@tanstack/query-core` 5.105.3, npm latest 11/04): `useMutation` onSettled counts single=1, overlap A=2, last B=1; `mutate()` onSettled 0/1/0. Why: `execute` awaits the cache `onSettled` and the options `onSettled` before marking the mutation no longer running; `mutate()` callbacks run after that.
+     - Evidence (script against `@tanstack/query-core` 5.105.3, npm latest 11/04): `useMutation` onSettled counts single=1, overlap A=2, last B=1; `mutate()` onSettled 0/1/0. Why: `execute` awaits the cache `onSettled` and the options `onSettled` before marking the mutation no longer running; `mutate()` callbacks run after that.
      - No official source: the optimistic-updates guide (https://tanstack.com/query/latest/docs/framework/react/guides/optimistic-updates) doesn't show it and only links TkDodo's article under Further reading.
      - Caveat: relies on internal step order the docs don't promise, so the overlapping-create test stays as the guard.
-     - Sofia's code (REVIEW-sofia.md §6):
+     - Reviewer's code (`reviews/sofia-plan-review.md` §6):
        ```ts
        const mutationKey = todoKeys.create()
        useMutation({
@@ -112,33 +112,34 @@ packages/todos/   api, model, ui, index.ts (only export)
 - **Git:** template repo, ~15–25 small conventional commits, no squash.
 
 ## 7. Timeline (submit as soon as done; hard limit ≈ Wed 11-11 09:47 UTC+7)
-Core + 2 tests fit the 4 h box, a hard cap (Andrew, 12:51; Sofia: previous plan was ~5.5 h).
+Core + 2 tests fit the 4 h box, a hard cap (Andrew, 12:51; the review found the previous plan was ~5.5 h).
+
 | Day | Work |
 |---|---|
-| Wed 11-04 | Andrew approves the plan. Optional: a receipt confirmation (Andrew decides). |
+| Wed 11-04 | Andrew approves the plan. |
 | Thu 11-05 | Template repo, Turborepo scaffold (pinned), shared contracts, MSW mock in `apps/web/src/mocks`, Users feature + routes |
 | Fri 11-06 | Todos feature, optimistic create (3 fixes) + rollback, Jotai active user, validation, a11y |
-| Sat 11-07 | Uma design/a11y pass + Sofia code review (one batch each). Fix, then the 2 tests |
+| Sat 11-07 | Design/a11y pass + code review (one batch each). Fix, then the 2 tests |
 | Sun 11-08 | README, reflection, ai-journey, fresh-eyes self-review (no deploy) |
 | When done | Andrew reviews, then submits by reply-all (he sends it himself); no fixed date |
 | By 11-11 09:47 | Hard limit |
 
 **If under budget only:** Playwright happy path. **Cut:** deploy, dev failure panel, Platform-UI look, separate mock package.
 
-## 8. Where Uma and Sofia come in
-_Sofia's plan review (REVIEW-sofia.md, 2026-11-04) is applied above; questions 1–7 below are answered there._
-- **Uma (one batched pass on Sat):**
+## 8. Where the review agents come in
+_The technical plan review (`reviews/sofia-plan-review.md`, 2026-11-04) is applied above; questions 1–7 below are answered there._
+- **Design-review agent (one batched pass):**
   - layout and visual consistency with the JTL Platform feel;
   - the form error UX and the optimistic "pending" item styling;
   - empty, loading and error states;
   - focus order and contrast (WCAG AA);
   - the rollback toast wording.
-- **Questions for Sofia:**
+- **Questions for the engineering agent:**
   1. Per-item rollback vs `setQueryData` snapshot: any edge cases, such as invalidate racing with onSuccess?
   2. Mock in `shared` or in a separate `mock-api` package? Does that violate "features depend only on shared"?
   3. Is the slot/render-prop for the assignee picker cleaner than an app-level adapter or DI via context?
   4. Router loaders + `ensureQueryData` vs plain `useSuspenseQuery`: which reads better to a reviewer?
-  5. ~~jotai 3 / msw 3 vs pinning 2.x?~~ Answered: jotai 3.0.1, msw 2.15.0 (decided: Andrew's choice via Sofia, 12:18).
+  5. ~~jotai 3 / msw 3 vs pinning 2.x?~~ Answered: jotai 3.0.1, msw 2.15.0 (decided: Andrew's choice on the engineering agent's recommendation, 12:18).
   6. Is ESLint `no-restricted-imports` enough, or should we use dependency-cruiser or Turborepo boundaries?
   7. Do the 3 tests + 1 e2e break the "no gold-plating" rule, or are they a net positive?
 
@@ -157,7 +158,7 @@ _Sofia's plan review (REVIEW-sofia.md, 2026-11-04) is applied above; questions 1
 2. **Repo public/private:** doesn't matter.
 3. **Hosted demo link:** doesn't matter, so deploy stays cut.
 4. **`@jtl-software/platform-ui-react`:** not asked for; plain Tailwind only.
-5. **Todo list location:** both (`/todos?assignee=` and the user detail page), as Sofia decided.
+5. **Todo list location:** both (`/todos?assignee=` and the user detail page), as the engineering agent suggested (Andrew agreed).
 6. **Going over 2–4 h:** No. **Hard cap 4 h.** Playwright only if it fits inside the cap.
-7. **No-AI rule covers the presentation:** Yes. AI helps with the code; GUIDE.md prepares Andrew to present it himself.
+7. **No-AI rule covers the presentation:** Yes. AI helps with the code; a private study guide prepares Andrew to present it himself.
 
