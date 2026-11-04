@@ -14,9 +14,11 @@ type Props = {
   status?: TodoStatus
   /** Slot for the status filter: the app owns the URL, the list only reports counts. */
   renderFilter?: (counts: Counts) => ReactNode
+  /** Left side of the toolbar row above the list (heading, extra controls). */
+  toolbarStart?: ReactNode
 }
 
-export function TodoList({ assigneeId, headingId, status = 'all', renderFilter }: Props) {
+export function TodoList({ assigneeId, headingId, status = 'all', renderFilter, toolbarStart }: Props) {
   const { data, isPending, isError, error, refetch } = useQuery(todosByAssigneeQueryOptions(assigneeId))
   const toggle = useToggleTodo()
   const remove = useDeleteTodo()
@@ -39,12 +41,22 @@ export function TodoList({ assigneeId, headingId, status = 'all', renderFilter }
     }
   }, [focusId, data])
 
-  if (isPending) return <ul aria-busy="true" aria-labelledby={headingId} className="flex flex-col gap-2">{[0, 1, 2].map((i) => <li key={i} className="h-12 animate-pulse rounded bg-zinc-200" />)}</ul>
+  const toolbar = (counts?: Counts) => (
+    <div className="flex flex-wrap items-center justify-between gap-3">
+      {toolbarStart}
+      {counts && renderFilter?.(counts)}
+    </div>
+  )
+
+  if (isPending) return <div className="flex flex-col gap-2">{toolbar()}<ul aria-busy="true" aria-labelledby={headingId} className="flex flex-col gap-2">{[0, 1, 2].map((i) => <li key={i} className="h-12 animate-pulse rounded bg-zinc-200" />)}</ul></div>
   if (isError)
     return (
+      <div className="flex flex-col gap-2">
+      {toolbar()}
       <div role="alert" className={`flex flex-col items-start gap-2 ${alertBoxClass}`}>
         <p>Could not load to-dos: {error.message}</p>
         <Button type="button" onClick={() => refetch()}>Retry</Button>
+      </div>
       </div>
     )
 
@@ -69,24 +81,14 @@ export function TodoList({ assigneeId, headingId, status = 'all', renderFilter }
   }
 
   return (
-    <div className="flex flex-col gap-3">
-      {renderFilter?.(counts)}
+    <div className="flex flex-col gap-2">
+      {toolbar(counts)}
       {notice?.kind === 'error' && (
         <p role="alert" className={alertBoxClass}>
           {notice.text}
           {isDev && notice.detail && <span className="block text-xs">Server: {notice.detail}</span>}
         </p>
       )}
-      <p role="status" aria-live="polite" className="flex min-h-6 items-center gap-2 text-sm text-zinc-700">
-        {notice?.kind === 'deleted' && (
-          <>
-            Deleted “{notice.todo.title}”.
-            <button ref={undoRef} type="button" className="min-h-11 rounded px-2 font-medium text-brand underline focus-visible:outline-2 focus-visible:outline-brand" onClick={() => onUndo(notice)}>
-              Undo
-            </button>
-          </>
-        )}
-      </p>
       {rows.length === 0 ? (
         <div className="rounded-lg border border-dashed border-zinc-300 p-6 text-center text-sm text-zinc-600">
           <p className="font-medium text-zinc-800">{counts.all === 0 ? 'No to-dos assigned yet.' : `No ${status} to-dos.`}</p>
@@ -122,6 +124,16 @@ export function TodoList({ assigneeId, headingId, status = 'all', renderFilter }
           ))}
         </ul>
       )}
+      <p role="status" aria-live="polite" className={notice?.kind === 'deleted' ? 'flex min-h-11 items-center gap-2 text-sm text-zinc-700' : 'sr-only'}>
+        {notice?.kind === 'deleted' && (
+          <>
+            Deleted “{notice.todo.title}”.
+            <button ref={undoRef} type="button" className="min-h-11 rounded px-2 font-medium text-brand underline focus-visible:outline-2 focus-visible:outline-brand" onClick={() => onUndo(notice)}>
+              Undo
+            </button>
+          </>
+        )}
+      </p>
     </div>
   )
 }

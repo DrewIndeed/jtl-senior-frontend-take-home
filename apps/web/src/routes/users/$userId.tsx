@@ -58,8 +58,7 @@ function UserDetail() {
       <UserCard user={user} />
       <div><DeleteUserButton user={user} onDeleted={onDeleted} /></div>
       <section aria-labelledby="todos-heading" className="flex flex-col gap-3">
-        <h2 id="todos-heading" className="text-lg font-semibold">Assigned to-dos</h2>
-        <TodoList assigneeId={userId} headingId="todos-heading" status={status} renderFilter={(counts) => <StatusFilter current={status} counts={counts} />} />
+        <TodoList toolbarStart={<h2 id="todos-heading" className="text-lg font-semibold">Assigned to-dos</h2>} assigneeId={userId} headingId="todos-heading" status={status} renderFilter={(counts) => <StatusFilter current={status} counts={counts} />} />
       </section>
       <section aria-labelledby="new-todo-heading" className="flex flex-col gap-3">
         <h2 id="new-todo-heading" className="text-lg font-semibold">Assign a new to-do</h2>

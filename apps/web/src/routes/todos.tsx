@@ -24,21 +24,31 @@ function Todos() {
   // URL wins (shareable); the Jotai "working as" user is only the default.
   const assignee = search.assignee ?? activeUserId ?? undefined
   const status = search.status ?? 'all'
+  const assigneePicker = (
+    <div className="flex items-center gap-2">
+      <label htmlFor="assignee-filter" className="text-sm font-medium whitespace-nowrap">Show to-dos for</label>
+      <UserSelect id="assignee-filter" value={assignee ?? ''}
+        onChange={(e) => navigate({ search: (prev) => ({ ...prev, assignee: (e.target.value || undefined) as never }) })} />
+    </div>
+  )
   return (
     <div className="flex flex-col gap-6">
       <h1 className="text-2xl font-semibold">To-dos</h1>
-      <div className="flex flex-col gap-1">
-        <label htmlFor="assignee-filter" className="text-sm font-medium">Show to-dos for</label>
-        <UserSelect id="assignee-filter" value={assignee ?? ''}
-          onChange={(e) => navigate({ search: (prev) => ({ ...prev, assignee: (e.target.value || undefined) as never }) })} />
-      </div>
       {assignee ? (
-        <section aria-labelledby="list-heading" className="flex flex-col gap-3">
-          <h2 id="list-heading" className="text-lg font-semibold">Assigned to-dos</h2>
-          <TodoList assigneeId={assignee} headingId="list-heading" status={status} renderFilter={(counts) => <StatusFilter current={status} counts={counts} />} />
+        <section aria-labelledby="list-heading">
+          <TodoList
+            toolbarStart={
+              <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
+                <h2 id="list-heading" className="text-lg font-semibold">Assigned to-dos</h2>
+                {assigneePicker}
+              </div>
+            } assigneeId={assignee} headingId="list-heading" status={status} renderFilter={(counts) => <StatusFilter current={status} counts={counts} />} />
         </section>
       ) : (
-        <p className="text-sm text-zinc-600">Pick a user to see their to-dos.</p>
+        <>
+          {assigneePicker}
+          <p className="text-sm text-zinc-600">Pick a user to see their to-dos.</p>
+        </>
       )}
       <section aria-labelledby="create-heading" className="flex flex-col gap-3">
         <h2 id="create-heading" className="text-lg font-semibold">New to-do</h2>
