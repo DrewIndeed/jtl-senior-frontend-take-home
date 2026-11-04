@@ -25,6 +25,7 @@ export const TodoSchema = z.object({
   id: z.string(),
   title: z.string(),
   assigneeId: UserIdSchema,
+  done: z.boolean(),
   createdAt: z.string(),
 })
 export type Todo = z.infer<typeof TodoSchema>
@@ -34,6 +35,9 @@ export const CreateTodoInputSchema = z.object({
   assigneeId: UserIdSchema.or(z.literal('')).refine((v) => v !== '', 'Choose an assignee.'),
 })
 export type CreateTodoInput = { title: string; assigneeId: UserId }
+
+export const TodoStatusSchema = z.enum(['all', 'open', 'done'])
+export type TodoStatus = z.infer<typeof TodoStatusSchema>
 
 /** Field-level messages from a failed safeParse, first message per field. */
 export function fieldErrors(error: z.ZodError): Record<string, string> {

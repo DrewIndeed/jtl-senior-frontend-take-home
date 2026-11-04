@@ -25,6 +25,24 @@ export const handlers = [
     if (db.usernameTaken(parsed.data.username)) return HttpResponse.json({ message: 'Username is already taken.' }, { status: 409 })
     return HttpResponse.json(db.addUser(parsed.data.username), { status: 201 })
   }),
+  http.delete('/api/users/:id', async ({ params }) => {
+    await latency()
+    if (shouldFail('users.delete')) return HttpResponse.json({ message: 'Server error (simulated)' }, { status: 500 })
+    return db.deleteUser(String(params.id)) ? new HttpResponse(null, { status: 204 }) : HttpResponse.json({ message: 'User not found' }, { status: 404 })
+  }),
+  http.patch('/api/todos/:id', async ({ params, request }) => {
+    await latency()
+    if (shouldFail('todos.update')) return HttpResponse.json({ message: 'Server error (simulated)' }, { status: 500 })
+    const body = (await request.json()) as { done?: unknown }
+    if (typeof body.done !== 'boolean') return HttpResponse.json({ message: 'Invalid update' }, { status: 400 })
+    const todo = db.updateTodo(String(params.id), { done: body.done })
+    return todo ? HttpResponse.json(todo) : HttpResponse.json({ message: 'To-do not found' }, { status: 404 })
+  }),
+  http.delete('/api/todos/:id', async ({ params }) => {
+    await latency()
+    if (shouldFail('todos.delete')) return HttpResponse.json({ message: 'Server error (simulated)' }, { status: 500 })
+    return db.deleteTodo(String(params.id)) ? new HttpResponse(null, { status: 204 }) : HttpResponse.json({ message: 'To-do not found' }, { status: 404 })
+  }),
   http.get('/api/todos', async ({ request }) => {
     await latency()
     const assigneeId = new URL(request.url).searchParams.get('assigneeId') ?? ''

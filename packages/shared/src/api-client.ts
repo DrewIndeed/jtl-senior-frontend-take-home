@@ -21,5 +21,5 @@ export async function apiRequest<S extends z.ZodType>(
     const body = (await res.json().catch(() => null)) as { message?: string } | null
     throw new ApiError(res.status, body?.message ?? `Request failed (${res.status})`)
   }
-  return schema.parse(await res.json())
+  return schema.parse(res.status === 204 ? undefined : await res.json())
 }

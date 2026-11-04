@@ -23,7 +23,7 @@ export function useCreateTodo() {
       const key = todoKeys.byAssignee(input.assigneeId)
       await client.cancelQueries({ queryKey: key })
       const tempId = `temp-${crypto.randomUUID()}`
-      const row: TodoRow = { id: tempId, title: input.title, assigneeId: input.assigneeId, createdAt: new Date().toISOString(), pending: true }
+      const row: TodoRow = { id: tempId, title: input.title, assigneeId: input.assigneeId, done: false, createdAt: new Date().toISOString(), pending: true }
       client.setQueryData<TodoRow[]>(key, (rows) => insertPending(rows, row))
       return { key, tempId }
     },
