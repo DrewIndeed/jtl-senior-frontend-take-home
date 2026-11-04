@@ -15,3 +15,10 @@ dist/
 bin/
 obj/
 *.user
+node_modules
+dist
+.turbo
+coverage
+*.tsbuildinfo
+.env*
+!.env.example
