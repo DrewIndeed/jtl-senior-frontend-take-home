@@ -24,3 +24,6 @@ These are in the order I gave them. **[real]** prompts are my own words, transla
 15. **[reconstructed]** "The todo form needs a user picker but must not import users. Give it a render slot, and compose UserSelect into it from apps/web."
 16. **[reconstructed]** "Write the one test that proves the key signal. Two overlapping creates where the first fails: the second must stay pending, then be reconciled, with exactly one invalidation. Then show the test fails if the rule is changed to === 0 or removed."
 17. **[reconstructed]** "Prove the boundary rule: add a todos → users import, run lint, capture the error, revert."
+
+## Design review fix pass
+18. **[reconstructed]** "Apply Uma's batched design and a11y review in one pass: the P0s first (Tailwind not scanning packages, the 409 error on the field with focus, a clear rollback alert), then the P1s and the cheap optional items. Keep the commits small, keep the tests green, push once at the end, and log the review, the fixes and what the AI missed."
