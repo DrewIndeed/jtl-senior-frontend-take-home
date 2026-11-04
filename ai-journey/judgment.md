@@ -1,0 +1,16 @@
+# Judgment: where AI helped, where it was wrong, where I overrode it
+
+**Where it helped:** reading the brief and turning it into a scoped plan fast. Checking versions and peer ranges on npm. Fact-checking docs through Context7. Typing the boilerplate. Writing a test that proves the tricky part.
+
+**Where it was wrong or I overrode it** (each case has its evidence):
+1. **Scope (~5.5h → hard 4h).** The first plan stacked "cheap extras" (failure panel, deploy, Platform-UI look, 3 tests + Playwright) and its own estimate came to about 5.5h against a 2–4h brief. I capped it at 4h: no deploy, no panel (the URL flag stays), plain Tailwind, 2 tests, Playwright only if trivially cheap. It wasn't, so it was cut.
+2. **Wrong option name: "autoSplit".** The decision record said "autoSplit". The router plugin option is `autoCodeSplitting` (checked in the router-generator config via Context7). The code uses the real name.
+3. **Overclaiming pnpm.** The draft said pnpm's strict `node_modules` "enforces boundaries". Per the pnpm docs it only blocks *undeclared* imports. If `todos` declares `@jtl/users`, the import works. So boundaries are enforced by ESLint `no-restricted-imports`. I checked that by adding a `todos → users` import: `eslint` fails with "Feature packages must not depend on each other".
+4. **`isMutating === 1` was unverified folklore.** The agent proposed it from a blog post. I asked for it to be checked against the official docs. The docs' optimistic-updates guide doesn't show it at all. A script against query-core 5.105.3 showed the count **includes** the settling mutation in the `useMutation` options `onSettled` (single = 1, overlap = 2 then 1). It doesn't include it in a `mutate(…, { onSettled })` callback (0, 1, 0). So `=== 1` is right only in the options callback, and a test guards it. Changing it to `=== 0`, or invalidating unconditionally, makes that test fail (both checked).
+5. **Snapshot rollback.** The docs' default example restores a whole-list snapshot. With two creates in flight, that also deletes the other pending item. I used per-item rollback by temp id.
+6. **Picking "latest" blindly.** npm latest TypeScript is 7.0.2, but typescript-eslint 8.72.1 peers `<6.1.0`. Pinned 5.9.3. msw: kept 2.15.0 over 3.0.3, because v3 renames start options (`onUnhandledFrame`) and most references use v2.
+7. **Agent bugs caught in self-review during the build:**
+   - The assignee slot overrode the `Field` id, which would have broken the `<label for>` link. Fixed before push.
+   - The first version of the overlap test polled too slowly to see the pending state (the failure landed at 20 ms). Lengthened the delays and polled every 5 ms, rather than weakening the assertion.
+   - `errorComponent` used `error.message` on `unknown`. Fixed by narrowing.
+8. **Toolchain.** Corepack tried to fetch pnpm 12.16.1 and crashed. I didn't debug it inside the time box and pinned the pnpm 10.33.4 already installed.
