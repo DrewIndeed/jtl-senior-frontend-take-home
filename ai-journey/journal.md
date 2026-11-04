@@ -3,6 +3,7 @@
 Every build step in order. Times are UTC+7. Hashes are the commits on `main`.
 
 ## Planning (2026-11-04, before any code)
+
 | Time | Step |
 |---|---|
 | 11:46 | The chief-of-staff agent read the template README and `senior-frontend-engineer/instructions.md` in full and listed the required items and the evaluation criteria. |
@@ -65,6 +66,7 @@ _Times below are git commit times. The earlier rows above at 14:38/14:40 were co
 | 14:46 | — | Clean re-run: `pnpm install --frozen-lockfile` ✅, `pnpm typecheck` ✅ 4/4, `pnpm lint` ✅ 4/4, `pnpm test` ✅ 2/2 (no test changes needed), `pnpm build` ✅. **Not verified:** the fixed UI in a real browser (no browser available to the build agent). | |
 
 ## [extra] minimal pass (15:00 scope cut)
+
 | Time | Commit | What changed |
 |---|---|---|
 | 15:01 | 29eae91 | `done` on the Todo contract and seed; MSW PATCH/DELETE `/api/todos/:id`, DELETE `/api/users/:id` (cascade); fail flags; `apiRequest` handles 204. |
@@ -75,6 +77,7 @@ _Times below are git commit times. The earlier rows above at 14:38/14:40 were co
 | 15:03 | 90d309c, ab5bf45 | Plain danger button in the dialog; slate → zinc, `--color-brand`. |
 
 ## Extras review fix pass (design review round 3)
+
 | Time | Commit | What changed |
 |---|---|---|
 | 15:06 | 61b2729 | Raw toggle error only in dev (added by the planning agent). |

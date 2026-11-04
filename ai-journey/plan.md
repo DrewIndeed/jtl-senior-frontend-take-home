@@ -25,6 +25,7 @@ Deliverables:
 Time box: 2–4 h. Don't gold-plate. Submit a template-created repo link by reply-all to the email within one week. A 45-min walkthrough follows about a week later.
 
 ## 2. Evaluation criteria → how we hit each one
+
 | Criterion | Plan |
 |---|---|
 | Module boundaries | `apps/web`, `packages/users`, `packages/todos`, `packages/shared`. Features never import each other, enforced by ESLint `no-restricted-imports` plus package `exports`. Cross-feature composition happens only in `apps/web`, via a slot such as `<CreateTodoForm renderAssigneeField={…}/>`. |
@@ -43,6 +44,7 @@ Time box: 2–4 h. Don't gold-plate. Submit a template-created repo link by repl
 - **Cut (technical review):** Platform UI look, Vercel deploy, dev failure panel, separate mock package, dependency-cruiser. Plain Tailwind.
 
 ## 4. Stack: exact pins (no `^`), per the engineering agent's npm check 2026-11-04
+
 | Package | Pin |
 |---|---|
 | turbo | 2.11.10 |

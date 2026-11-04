@@ -5,6 +5,7 @@
 **axe:** clean on every page except the unknown-user page (`page-has-heading-one`, moderate).
 
 ## Findings and what was done
+
 | # | Pri | Finding | Fix |
 |---|---|---|---|
 | 1 | P0 | Tailwind v4 didn't scan `packages/`, so the shared and feature UI rendered unstyled | `@source "../../../packages";` in `apps/web/src/index.css` |
