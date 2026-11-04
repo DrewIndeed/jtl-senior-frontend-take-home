@@ -1,6 +1,6 @@
 import { useState, type ReactNode } from 'react'
 import { useQuery } from '@tanstack/react-query'
-import { alertBoxClass, Button, type TodoStatus, type UserId } from '@jtl/shared'
+import { alertBoxClass, Button, isDev, type TodoStatus, type UserId } from '@jtl/shared'
 import { todosByAssigneeQueryOptions, type TodoRow } from '../model/keys'
 import { useCreateTodo } from '../model/useCreateTodo'
 import { useDeleteTodo, useToggleTodo } from '../model/useTodoWrites'
@@ -36,7 +36,7 @@ export function TodoList({ assigneeId, headingId, status = 'all', renderFilter }
   const rows = status === 'all' ? data : data.filter((t) => (status === 'done' ? t.done : !t.done))
 
   const onToggle = (t: TodoRow) =>
-    toggle.mutate(t, { onError: (e) => setNotice({ kind: 'error', text: `Couldn’t update “${t.title}”. We put it back. ${e.message}` }) })
+    toggle.mutate(t, { onError: (e) => setNotice({ kind: 'error', text: `Couldn’t update “${t.title}”. We put it back.${isDev ? ` ${e.message}` : ''}` }) })
   const onDelete = (t: TodoRow) => {
     setNotice({ kind: 'deleted', todo: t })
     remove.mutate(t, { onError: () => setNotice({ kind: 'error', text: `Couldn’t delete “${t.title}”. We put it back.` }) })
