@@ -1,4 +1,4 @@
-import { useId, useRef } from 'react'
+import { useEffect, useId, useRef } from 'react'
 import { alertBoxClass, type User } from '@jtl/shared'
 import { useDeleteUser } from '../model/queries'
 
@@ -7,6 +7,11 @@ export function DeleteUserButton({ user, onDeleted }: { user: User; onDeleted: (
   const dialogRef = useRef<HTMLDialogElement>(null)
   const titleId = useId()
   const mutation = useDeleteUser()
+  const confirmRef = useRef<HTMLButtonElement>(null)
+  // On failure the dialog stays open; put focus back on its (re-enabled) Delete button.
+  useEffect(() => {
+    if (mutation.isError) confirmRef.current?.focus()
+  }, [mutation.isError])
 
   const confirm = () =>
     mutation.mutate(user.id, {
@@ -28,7 +33,7 @@ export function DeleteUserButton({ user, onDeleted }: { user: User; onDeleted: (
         {mutation.isError && <p role="alert" className={`mt-3 ${alertBoxClass}`}>Couldn’t delete the user. Try again.</p>}
         <form method="dialog" className="mt-6 flex justify-end gap-2">
           <button className="min-h-11 rounded-md px-4 text-sm font-medium hover:bg-zinc-100 focus-visible:outline-2 focus-visible:outline-brand">Cancel</button>
-          <button type="button" disabled={mutation.isPending} onClick={confirm}
+          <button ref={confirmRef} type="button" disabled={mutation.isPending} onClick={confirm}
             className="min-h-11 rounded-md bg-red-700 px-4 text-sm font-medium text-white hover:bg-red-800 disabled:opacity-60 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand">
             {mutation.isPending ? 'Deleting…' : 'Delete user'}
           </button>
