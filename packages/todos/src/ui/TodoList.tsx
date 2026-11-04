@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
-import type { UserId } from '@jtl/shared'
+import { alertBoxClass, Button, type UserId } from '@jtl/shared'
 import { todosByAssigneeQueryOptions } from '../model/keys'
 
 export function TodoList({ assigneeId, headingId }: { assigneeId: UserId; headingId?: string }) {
@@ -7,9 +7,9 @@ export function TodoList({ assigneeId, headingId }: { assigneeId: UserId; headin
   if (isPending) return <ul aria-busy="true" aria-labelledby={headingId} className="flex flex-col gap-2">{[0, 1, 2].map((i) => <li key={i} className="h-10 animate-pulse rounded bg-slate-200" />)}</ul>
   if (isError)
     return (
-      <div role="alert" className="text-sm text-red-700">
-        Could not load to-dos: {error.message}{' '}
-        <button type="button" className="underline" onClick={() => refetch()}>Retry</button>
+      <div role="alert" className={`flex flex-col items-start gap-2 ${alertBoxClass}`}>
+        <p>Could not load to-dos: {error.message}</p>
+        <Button type="button" onClick={() => refetch()}>Retry</Button>
       </div>
     )
   if (data.length === 0) return <p className="text-sm text-slate-600">No to-dos assigned yet.</p>

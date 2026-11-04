@@ -1,5 +1,5 @@
 import { useRef, useState, type FormEvent, type ReactNode } from 'react'
-import { Button, CreateTodoInputSchema, isDev, Field, fieldErrors, inputClass, type UserId } from '@jtl/shared'
+import { alertBoxClass, Button, CreateTodoInputSchema, isDev, Field, fieldErrors, inputClass, type UserId } from '@jtl/shared'
 import { useCreateTodo } from '../model/useCreateTodo'
 
 type AssigneeFieldProps = { id: string; value: string; onChange: (id: string) => void; 'aria-invalid': boolean; 'aria-describedby'?: string }
@@ -57,7 +57,7 @@ export function CreateTodoForm({ renderAssigneeField, defaultAssigneeId }: Props
       </div>
       <Button type="submit">Add to-do</Button>
       {rollback && (
-        <p role="alert" className="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-800">
+        <p role="alert" className={alertBoxClass}>
           Couldn’t save “{rollback.title}”. We removed it from the list. Try again.
           {isDev && <span className="block text-xs text-red-700">Server: {rollback.detail}</span>}
         </p>

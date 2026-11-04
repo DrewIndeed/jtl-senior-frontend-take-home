@@ -1,6 +1,6 @@
-import { createFileRoute, notFound } from '@tanstack/react-router'
+import { createFileRoute, Link, notFound } from '@tanstack/react-router'
 import { useSuspenseQuery } from '@tanstack/react-query'
-import { ApiError, UserIdSchema } from '@jtl/shared'
+import { alertBoxClass, ApiError, Button, UserIdSchema } from '@jtl/shared'
 import { UserCard, userQueryOptions } from '@jtl/users'
 import { CreateTodoForm, TodoList, todosByAssigneeQueryOptions } from '@jtl/todos'
 import { renderAssigneeField } from '../../components/AssigneeField'
@@ -18,11 +18,16 @@ export const Route = createFileRoute('/users/$userId')({
     }
   },
   pendingComponent: () => <div aria-busy="true" className="h-24 animate-pulse rounded-lg bg-slate-200" />,
-  notFoundComponent: () => <p role="alert">This user does not exist.</p>,
+  notFoundComponent: () => (
+    <div className="flex flex-col gap-3">
+      <h1 className="text-xl font-semibold">User not found</h1>
+      <Link to="/" className="inline-flex min-h-11 items-center underline">Back to users</Link>
+    </div>
+  ),
   errorComponent: ({ error, reset }) => (
-    <div role="alert">
-      <p>Could not load the user: {error instanceof Error ? error.message : "Unknown error"}</p>
-      <button type="button" className="underline" onClick={reset}>Retry</button>
+    <div role="alert" className={`flex flex-col items-start gap-2 ${alertBoxClass}`}>
+      <p>Could not load the user: {error instanceof Error ? error.message : 'Unknown error'}</p>
+      <Button type="button" onClick={reset}>Retry</Button>
     </div>
   ),
   component: UserDetail,

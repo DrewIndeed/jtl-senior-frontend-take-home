@@ -25,3 +25,6 @@ export function Field({ label, error, hint, children }: Props) {
 
 export const inputClass =
   'min-h-11 rounded-md border border-slate-300 bg-white px-3 py-2 text-slate-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 aria-invalid:border-red-600'
+
+/** Red alert box shared by rollback and load errors. */
+export const alertBoxClass = 'rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-800'
