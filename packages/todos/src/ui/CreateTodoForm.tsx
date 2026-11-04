@@ -1,4 +1,6 @@
-import { useRef, useState, type FormEvent, type ReactNode } from 'react'
+import { useEffect, useRef, useState, type FormEvent, type ReactNode } from 'react'
+import { useQueryClient } from '@tanstack/react-query'
+import { todoKeys } from '../model/keys'
 import { alertBoxClass, Button, CreateTodoInputSchema, isDev, Field, fieldErrors, inputClass, type UserId } from '@jtl/shared'
 import { useCreateTodo } from '../model/useCreateTodo'
 
@@ -19,6 +21,21 @@ export function CreateTodoForm({ renderAssigneeField, defaultAssigneeId }: Props
   const titleRef = useRef<HTMLInputElement>(null)
   const assigneeRef = useRef<HTMLDivElement>(null)
   const mutation = useCreateTodo()
+  // Don't let "Added …" sit next to a later "Deleted … Undo": clear after 4s or when a toggle/delete starts.
+  const client = useQueryClient()
+  useEffect(
+    () =>
+      client.getMutationCache().subscribe((e) => {
+        const key = e.mutation?.options.mutationKey
+        if (e.type === 'added' && key?.[0] === todoKeys.all[0] && (key[1] === 'toggle' || key[1] === 'delete')) setStatus('')
+      }),
+    [client],
+  )
+  useEffect(() => {
+    if (!status.startsWith('Added')) return
+    const t = setTimeout(() => setStatus(''), 4000)
+    return () => clearTimeout(t)
+  }, [status])
 
   function submit(e: FormEvent) {
     e.preventDefault()
