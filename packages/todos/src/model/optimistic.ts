@@ -6,3 +6,12 @@ export const insertPending = (rows: TodoRow[] | undefined, row: TodoRow): TodoRo
 export const removeById = (rows: TodoRow[] | undefined, id: string): TodoRow[] | undefined => rows?.filter((r) => r.id !== id)
 export const replaceById = (rows: TodoRow[] | undefined, id: string, todo: Todo): TodoRow[] | undefined =>
   rows?.map((r) => (r.id === id ? todo : r))
+export const patchById = (rows: TodoRow[] | undefined, id: string, patch: Partial<Todo>): TodoRow[] | undefined =>
+  rows?.map((r) => (r.id === id ? { ...r, ...patch } : r))
+/** Put a row back at its old index unless it is already there (per-item rollback for delete). */
+export const restoreAt = (rows: TodoRow[] | undefined, row: TodoRow, index: number): TodoRow[] | undefined => {
+  if (!rows || rows.some((r) => r.id === row.id)) return rows
+  const next = [...rows]
+  next.splice(Math.min(index, next.length), 0, row)
+  return next
+}
