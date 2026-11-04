@@ -11,3 +11,6 @@ Batched review by the design-review agent. Screenshots stayed on the review box.
 | P1-5 | "Added …" shown alongside "Deleted … Undo" | Cleared after 4s or when a toggle/delete starts (4e3a2e8, e2d5f98) |
 | P2-6 | No confirmation after a user delete | Home status line + focused h1 (66da0cd) |
 | P2-7 | Small checkbox target | 44px wrapper (9ffa98d) |
+
+## Round 4: filter visuals
+Per Uma, Andrew found the filters confusing (the active tab was too subtle and the tabs, the "Working as" picker and an empty status line competed for attention). Fixes: solid dark active tab with plain-text counts, one toolbar row (heading and picker left, tabs right), the Undo status line moved below the list and visually hidden when empty, and "Working as" restyled as an identity chip. axe found 0 violations on `/todos?status=open` and `/users/u1?status=done` at 1440 and 390 px.
