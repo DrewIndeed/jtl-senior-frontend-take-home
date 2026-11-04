@@ -38,7 +38,7 @@ function Todos() {
           <TodoList assigneeId={assignee} headingId="list-heading" status={status} renderFilter={(counts) => <StatusFilter current={status} counts={counts} />} />
         </section>
       ) : (
-        <p className="text-sm text-slate-600">Pick a user to see their to-dos.</p>
+        <p className="text-sm text-zinc-600">Pick a user to see their to-dos.</p>
       )}
       <section aria-labelledby="create-heading" className="flex flex-col gap-3">
         <h2 id="create-heading" className="text-lg font-semibold">New to-do</h2>

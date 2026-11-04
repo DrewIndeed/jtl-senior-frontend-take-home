@@ -1,2 +1,6 @@
 @import "tailwindcss";
 @source "../../../packages";
+
+@theme {
+  --color-brand: var(--color-indigo-700);
+}

@@ -62,7 +62,7 @@ export function CreateTodoForm({ renderAssigneeField, defaultAssigneeId }: Props
           {isDev && <span className="block text-xs text-red-700">Server: {rollback.detail}</span>}
         </p>
       )}
-      <p role="status" aria-live="polite" className="text-sm text-slate-700">{status}</p>
+      <p role="status" aria-live="polite" className="text-sm text-zinc-700">{status}</p>
     </form>
   )
 }

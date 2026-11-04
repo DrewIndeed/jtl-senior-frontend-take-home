@@ -23,7 +23,7 @@ export const Route = createFileRoute('/users/$userId')({
       throw err
     }
   },
-  pendingComponent: () => <div aria-busy="true" className="h-24 animate-pulse rounded-lg bg-slate-200" />,
+  pendingComponent: () => <div aria-busy="true" className="h-24 animate-pulse rounded-lg bg-zinc-200" />,
   notFoundComponent: () => (
     <div className="flex flex-col gap-3">
       <h1 className="text-xl font-semibold">User not found</h1>
