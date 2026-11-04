@@ -41,7 +41,7 @@ Checked against [`senior-frontend-engineer/instructions.md`](senior-frontend-eng
 | Time box of 2–4 hours (§Time box) | ⚠️ partial: the core build stayed inside the box, but planning plus the [extra] pass went past 4h of wall-clock time | [Key decisions → Time](#key-decisions-and-trade-offs), [`journal.md`](ai-journey/journal.md) |
 | E2E tests (Playwright) | ✂️ cut to stay in the time box; outlined only | [Reflection](#reflection) |
 | Hosted deploy | ✂️ cut, not asked for (CI/CD is out of scope per §What you do NOT need to do) | — |
-| Bundle size | ⚠️ measured, but there is no budget gate. Measured 2026-11-04 16:28 UTC+7 at a562a89, gzipped entry + preloaded chunks + CSS: app only ≈ 146 KB; with the MSW worker ≈ 305 KB. The Reflection's 139 / 293 KB figures are from 14:45, before the [extra] pass | [Reflection](#reflection) |
+| Bundle size | ⚠️ measured, but there is no budget gate. Measured 2026-11-04 16:27 UTC+7 at a562a89, gzipped entry + preloaded chunks + CSS: app only ≈ 146 KB; with the MSW worker ≈ 305 KB. The earlier 139 / 293 KB figures were from 14:45, before the [extra] pass | [Reflection](#reflection) |
 
 ## Why this split
 | Package | Owns | May import |
@@ -75,7 +75,7 @@ Added after the core build, on purpose kept small (commits 29eae91–ab5bf45, 15
 **Performance**
 - The server cache is the single source: stable query-key factories, a 30s `staleTime`, no server data in Jotai. Only components that read a query re-render when it changes.
 - Routes are code-split (`autoCodeSplitting`) and preloaded on link intent. Loaders start the user and to-do requests in parallel. Optimistic rows swap in place, so there's no list flash.
-- **Bundle (measured, `gzip -c`, entry + modulepreloaded chunks + CSS):** app only ≈ **139 KB gz** (JS 136 + CSS 3). With the mock ≈ **293 KB gz**, because `main.tsx` awaits the MSW worker (≈ 155 KB gz) before the first render in every build, so reviewers get the mock backend. A real deployment would gate the mock behind an env flag (e.g. `VITE_ENABLE_MOCKS`) so only the app-only number ships.
+- **Bundle (measured, `gzip -c`, entry + modulepreloaded chunks + CSS, at a562a89 on 2026-11-04 16:27 UTC+7, including the [extra] features):** app only ≈ **146 KB gz**. With the mock ≈ **305 KB gz**, because `main.tsx` awaits the MSW worker (≈ 159 KB gz) before the first render in every build, so reviewers get the mock backend. The earlier 139 / 293 KB figures were measured at 14:45, before the [extra] pass. A real deployment would gate the mock behind an env flag (e.g. `VITE_ENABLE_MOCKS`) so only the app-only number ships.
 
 **Testing (what I'd do for production)**
 - Done: an integration test of the key signal. Two overlapping creates, one fails, and the other must stay and be reconciled, with a single invalidation. Also an accessible validation test (messages tied by `aria-describedby`, focus on the first invalid field).
