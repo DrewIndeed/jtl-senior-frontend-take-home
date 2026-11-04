@@ -12,7 +12,13 @@ export function TodoList({ assigneeId, headingId }: { assigneeId: UserId; headin
         <Button type="button" onClick={() => refetch()}>Retry</Button>
       </div>
     )
-  if (data.length === 0) return <p className="text-sm text-slate-600">No to-dos assigned yet.</p>
+  if (data.length === 0)
+    return (
+      <div className="rounded-lg border border-dashed border-slate-300 p-6 text-center text-sm text-slate-600">
+        <p className="font-medium text-slate-800">No to-dos assigned yet.</p>
+        <p className="mt-1">Add one with the form below.</p>
+      </div>
+    )
   return (
     <ul aria-labelledby={headingId} className="flex flex-col gap-2">
       {data.map((t) => (
