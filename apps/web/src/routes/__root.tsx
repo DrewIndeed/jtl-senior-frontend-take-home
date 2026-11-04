@@ -2,7 +2,7 @@ import { createRootRouteWithContext, Link, Outlet } from '@tanstack/react-router
 import type { QueryClient } from '@tanstack/react-query'
 import { ActiveUserSelect } from '../components/ActiveUserSelect'
 
-const navLink = 'rounded px-2 py-1 hover:bg-slate-100 focus-visible:outline-2 focus-visible:outline-blue-600 [&.active]:font-semibold [&.active]:underline'
+const navLink = 'inline-flex min-h-11 items-center rounded px-3 hover:bg-slate-100 focus-visible:outline-2 focus-visible:outline-blue-600 [&.active]:font-semibold [&.active]:underline'
 
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
   component: RootLayout,
