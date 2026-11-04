@@ -73,3 +73,10 @@ _Times below are git commit times. The earlier rows above at 14:38/14:40 were co
 | 15:02 | 69346b2 | `useDeleteUser` + `DeleteUserButton` (native `<dialog>`). The dialog copy is mine; the original brief's copy wasn't available to the agent. |
 | 15:02 | 680e824 | `StatusFilter`, `?status=` on `/todos` and `/users/$userId`; cascade cleanup + atom clear in the app. |
 | 15:03 | 90d309c, ab5bf45 | Plain danger button in the dialog; slate → zinc, `--color-brand`. |
+
+## Extras review fix pass (Uma round 3)
+| Time | Commit | What changed |
+|---|---|---|
+| 15:06 | 61b2729 | Raw toggle error only in dev (added by the coordinating agent). |
+| 15:15 | fc12244 … 66da0cd | Original-index restore, focus management, form status clearing, dialog refocus, exact status tabs + segmented control, Home delete confirmation. See `reviews/uma-extras-review.md`. |
+| 15:17 | e2d5f98, cb30efc | Follow-ups found by the box click-through: "Added" arriving after a delete started; exact search match on tabs. |

@@ -31,10 +31,10 @@ A feature is the unit of ownership. The to-do form needs a user picker but must 
 - **Time:** planning and plan review took about 3h on 2026-11-04 (11:46–14:23 UTC+7, agent work plus my decisions). The build ran from the first build commit `6930f67` (14:25) to `a39ce19` (14:34), as an agent run I directed and reviewed. A design/a11y review fix pass followed (first commit 14:43, see the journal for the end). Timestamps are from git; details are in `ai-journey/journal.md`.
 
 ## [extra] Beyond the brief (minimal pass)
-Added after the core build, on purpose kept small (commits 29eae91–ab5bf45, 15:01–15:03 UTC+7 on 2026-11-04 per git; agent run I scoped down to "minimal"):
-- **Toggle and delete to-dos**, both optimistic with per-item rollback (same `isMutating === 1` settle rule as create). Delete shows "Deleted … Undo" in the list's status line. Undo re-creates the to-do (new id, back to open); a deferred delete would keep the id but adds timers, so I chose the simpler one.
+Added after the core build, on purpose kept small (commits 29eae91–ab5bf45, 15:01–15:03 UTC+7 on 2026-11-04 per git; agent run I scoped down to "minimal"; a design/a11y review fix pass followed, 61b2729 at 15:06 and fc12244–cb30efc at 15:15–15:17):
+- **Toggle and delete to-dos**, both optimistic with per-item rollback (same `isMutating === 1` settle rule as create). Delete shows "Deleted … Undo" in the list's status line. Undo re-creates the to-do at its original position (new id, back to open); a deferred delete would keep the id but adds timers, so I chose the simpler one. Keeping the position after the refetch relies on a mock-only `index` hint on POST; a real API would need an undelete or position field. Focus moves to Undo after a delete and back to the row's checkbox after Undo or a failed delete.
 - **Delete user** with a native `<dialog>` confirm. The mock cascades to their to-dos. The users package only cleans its own cache; `apps/web` drops that user's to-do cache, clears the "working as" atom if it pointed at them, and goes home.
-- **`?status=all|open|done` filter** with counts on `/todos` and the user page (URL-owned, zod-validated, bad values fall back to All).
+- **`?status=all|open|done` filter** (segmented control, exactly one tab `aria-current`) with counts on `/todos` and the user page (URL-owned, zod-validated, bad values fall back to All).
 - **Look:** slate → zinc, one `--color-brand` (indigo-700) token in `@theme`.
 - Mock fail flags: `?fail=todos.update`, `?fail=todos.delete`, `?fail=users.delete`.
 - **Not done:** new tests for these (existing 2 still pass), inline edit, toasts.
