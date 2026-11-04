@@ -22,3 +22,6 @@ coverage
 *.tsbuildinfo
 .env*
 !.env.example
+
+# TanStack Router generator temp files
+.tanstack/
