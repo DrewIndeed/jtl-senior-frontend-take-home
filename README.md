@@ -28,7 +28,7 @@ A feature is the unit of ownership. The to-do form needs a user picker but must 
 - **Mock: MSW** runs at the network level, so the data layer is production code calling `fetch`. The same handlers serve the browser and the Vitest node server. An in-memory client would be simpler, but it skips the network boundary.
 - **Routing:** file-based TanStack Router with `autoCodeSplitting`. Loaders call `ensureQueryData` and prefetch the to-dos in parallel, so there's no waterfall. The `userId` param is parsed into the brand. A 404 shows `notFoundComponent`. `routeTree.gen.ts` is committed, so typecheck works on a clean clone.
 - **Cut to stay in the 4h box:** Playwright, a deploy, a failure panel (the URL flag is enough), design-system styling, and dependency-cruiser.
-- **Time:** about 3h of build from scaffold to checks (14:24–~17:00 UTC+7 on 2026-11-04), plus about 1h of planning and review earlier the same day. AI agents did most of the typing, and the plan and judgment were mine. See `ai-journey/`.
+- **Time:** planning and review took about 3h on 2026-11-04 (11:46–14:23 UTC+7, mostly agent work plus my decisions). The build, from repo creation to all checks green, ran 14:24–14:40 UTC+7 as an agent run that I directed and reviewed. Including docs it stays inside the 4h cap. The real timestamps are in `ai-journey/journal.md`.
 
 ## Reflection
 **Performance**
