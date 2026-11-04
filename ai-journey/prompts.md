@@ -27,3 +27,7 @@ These are in the order I gave them. **[real]** prompts are my own words, transla
 
 ## Design review fix pass
 18. **[reconstructed]** "Apply Uma's batched design and a11y review in one pass: the P0s first (Tailwind not scanning packages, the 409 error on the field with focus, a clear rollback alert), then the P1s and the cheap optional items. Keep the commits small, keep the tests green, push once at the end, and log the review, the fixes and what the AI missed."
+
+## Extras (minimal)
+19. **[real, translated]** "Then just do it minimalist."
+20. **[reconstructed]** "Add only: PATCH/DELETE to-do and DELETE user (cascade) in MSW with fail flags; an optimistic toggle checkbox and delete with per-item rollback and a simple Undo in the existing status area; user delete behind a native <dialog>, with cross-feature cleanup in apps/web and the active user cleared; a URL ?status= filter with counts; slate→zinc plus one brand token. No new tests, no toasts, push once."

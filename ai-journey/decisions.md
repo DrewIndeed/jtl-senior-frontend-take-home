@@ -28,3 +28,4 @@ Condensed from my Decision Guide (D1–D22, written during planning). Each line 
 | D22 | Ask early | Open questions answered in planning (submit when done, todo list in both places, plain Tailwind) | — |
 | D23 | Package scope `@jtl/*` (the plan said `@app/*`) | A naming choice made during scaffolding. The reason wasn't recorded at the time. | Purely cosmetic. The lint boundary patterns use `@jtl/*` |
 | D24 | Mock worker stays on the first-load path | Reviewers need the mock in every build | First load ≈ 293 KB gz vs ≈ 139 KB app-only. A real deployment would gate it with an env flag |
+| D25 | [extra] features kept minimal; Undo re-creates instead of a deferred delete | Asked to keep the extra pass small to save usage | The restored to-do gets a new id and is open again. No new tests for the extras |

@@ -63,3 +63,13 @@ _Times below are git commit times. The earlier rows above at 14:38/14:40 were co
 | 14:45 | 449828c | README: real build times from git, and measured bundle (app-only ≈ 139 KB gz, with mock ≈ 293 KB gz, env-flag gate noted). | Honesty fixes (see `judgment.md` #10, #11). |
 | 14:45 | ab091c1, 3be847f | `reviews/uma-design-a11y-review.md`, D23 (`@jtl/*` scope, reason not recorded), D24 (mock on the first-load path), judgment entries, key prompt. | Logging. |
 | 14:46 | — | Clean re-run: `pnpm install --frozen-lockfile` ✅, `pnpm typecheck` ✅ 4/4, `pnpm lint` ✅ 4/4, `pnpm test` ✅ 2/2 (no test changes needed), `pnpm build` ✅. **Not verified:** the fixed UI in a real browser (no browser available to the build agent). | |
+
+## [extra] minimal pass (15:00 scope cut)
+| Time | Commit | What changed |
+|---|---|---|
+| 15:01 | 29eae91 | `done` on the Todo contract and seed; MSW PATCH/DELETE `/api/todos/:id`, DELETE `/api/users/:id` (cascade); fail flags; `apiRequest` handles 204. |
+| 15:01 | 717295d | `useToggleTodo`, `useDeleteTodo`: per-item rollback (`patchById`, `restoreAt`), invalidate on last settle. |
+| 15:01 | a9ee4c9 | TodoList: checkbox, Delete, "Deleted … Undo" (re-create), counts + `renderFilter` slot. |
+| 15:02 | 69346b2 | `useDeleteUser` + `DeleteUserButton` (native `<dialog>`). The dialog copy is mine; the original brief's copy wasn't available to the agent. |
+| 15:02 | 680e824 | `StatusFilter`, `?status=` on `/todos` and `/users/$userId`; cascade cleanup + atom clear in the app. |
+| 15:03 | 90d309c, ab5bf45 | Plain danger button in the dialog; slate → zinc, `--color-brand`. |
