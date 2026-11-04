@@ -1,7 +1,21 @@
 # Journal
 
 Every build step in order. Times are UTC+7. Hashes are the commits on `main`.
-Planning before 14:23 (reading the brief, the plan, and the technical review) is summarised in `plan.md` and `decisions.md`.
+
+## Planning (2026-11-04, before any code)
+| Time | Step |
+|---|---|
+| 11:46 | The chief-of-staff agent read the template README and `senior-frontend-engineer/instructions.md` in full and listed the required items and the evaluation criteria. |
+| 11:48 | Researched the team's public stack (Vite, React, file-based TanStack Router, Tailwind). Checked npm: jotai 3 and msw 3 are new majors. |
+| 11:50 | Strategy: depth on the graded signals (optimistic correctness, boundaries, AI journey), not more features. Per-item rollback, slot composition, URL/Query/Jotai ownership, lint-enforced boundaries, MSW with a failure toggle. |
+| 11:55 | Wrote the plan (`plan.md`). |
+| ~12:10 | The code-review agent reviewed the plan (`reviews/sofia-plan-review.md`). Verdicts: keep the required stack and cut the extras; pin msw 2.15.0; fix the optimistic pattern (temp id + keys returned from onMutate, last-settle invalidate); "autoSplit" is really `autoCodeSplitting`; pnpm doesn't block declared deps. |
+| 12:18 | I chose msw 2.15.0 and committing `routeTree.gen.ts`. |
+| 12:51 | I answered the open questions: hard 4h cap, plain Tailwind, to-do list in both places, no deploy, presentation without AI. |
+| 12:55 | `isMutating === 1` verified with a script against query-core 5.105.3; not in the official docs (`reviews/sofia-plan-review.md` §6). |
+| 14:23 | I approved plan v2.1. |
+
+## Build
 
 | Time | Commit | What changed | Why |
 |---|---|---|---|
@@ -21,3 +35,12 @@ Planning before 14:23 (reading the brief, the plan, and the technical review) is
 | 14:31 | ff051e0 | `main.tsx` (worker start, then render; Jotai, Query and Router providers). `router.tsx` (router context `{ queryClient }`, preload on intent). | Loaders can call `ensureQueryData` through the context. |
 | 14:31 | 8eda6f3 | Routes `/`, `/users/new`, `/users/$userId` (zod `params.parse`, loader prefetches to-dos in parallel with `ensureQueryData(user)`, 404 → `notFound()`, pending/error/notFound components), `/todos` (`validateSearch` + `loaderDeps`; the URL wins, the Jotai user is the default). `routeTree.gen.ts` committed. | Matches the plan's routing row. Committing the generated tree keeps typecheck working on a clean clone. |
 | 14:31 | — | `pnpm typecheck` failed once: TS18046, `error` was `unknown` in `errorComponent`. Fixed with an `instanceof Error` guard. Typecheck and lint then passed (4/4 tasks). | |
+| 14:32 | 8356d1e | Tests: (1) two overlapping creates, A fails at 150 ms, B succeeds at 400 ms. Asserts both pending → only A removed and B still pending with **no** invalidation → B swapped for the server item (non-temp id) → exactly **one** invalidation. (2) Validation: `aria-invalid`, messages via `aria-describedby`, focus on the first invalid field, whitespace trimmed. MSW `setupServer` in `setupFiles`, `resetHandlers` + `resetDb` after each test, `onUnhandledRequest: 'error'`, a fresh QueryClient with `retry:false`. | Proves the key signal. |
+| 14:32 | — | First run failed: the 20 ms failure landed before `waitFor` polled (50 ms default), so the pending state was never seen. Fixed with longer mock delays and a 5 ms poll interval. The assertion was not weakened. | |
+| 14:32 | — | **Guard check:** temporarily set `=== 0` → test fails. Temporarily invalidated unconditionally → test fails. Restored. | Shows the test really guards the undocumented `isMutating` behaviour. |
+| 14:33 | — | **Boundary check:** temporarily added `import { UserCard } from '@jtl/users'` to `packages/todos`. `eslint src` → `error '@jtl/users' import is restricted … Feature packages must not depend on each other` (1 error). Reverted. | Proves the lint rule works. |
+| 14:33 | — | `pnpm build` passed. `pnpm dev --port 5199` booted; `GET /` → 200; then stopped. Gzipped chunks: app entry 76.7 KB, router/link 21.4 KB, others 26.5 / 10.0 KB, MSW browser worker 159.8 KB (demo only). | |
+| 14:34 | 80dd914, cd3e358 | README: run steps, split table, trade-offs (ownership, rollback design + `useMutationState` alternative, Zod, MSW, routing), cuts, honest time, reflection (3 perf, 3 testing). | Brief deliverables. |
+| 14:38 | aa0bfe6 … d5f9302 | ai-journey: `plan.md` (approved plan as-is, recruiter names and email draft removed), `reviews/`, `decisions.md`, `prompts.md`, `toolchain.md`, `judgment.md`. | Required, and weighed like the code. |
+| 14:40 | — | Clean re-run from an empty `node_modules`: `pnpm install --frozen-lockfile` ✅, `pnpm typecheck` ✅ 4/4, `pnpm lint` ✅ 4/4, `pnpm test` ✅ 2/2, `pnpm build` ✅. | Final verification before push. |
+| 14:40 | — | **Cut:** Playwright (not trivially cheap: browser download plus config), deploy, failure panel, design-system look. **Not verified by hand:** clicking through the UI in a real browser, including the `?fail=` flow (verified only by the automated tests and the dev-server boot). | Honest scope. |
