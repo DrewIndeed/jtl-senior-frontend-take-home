@@ -26,8 +26,8 @@ function Todos() {
   const status = search.status ?? 'all'
   const assigneePicker = (
     <div className="flex items-center gap-2">
-      <label htmlFor="assignee-filter" className="text-sm font-medium whitespace-nowrap">Show to-dos for</label>
-      <UserSelect id="assignee-filter" value={assignee ?? ''}
+      <label htmlFor="assignee-filter" className="text-sm font-medium whitespace-nowrap text-zinc-700">Show to-dos for</label>
+      <UserSelect id="assignee-filter" size="sm" className="w-auto min-w-44" value={assignee ?? ''}
         onChange={(e) => navigate({ search: (prev) => ({ ...prev, assignee: (e.target.value || undefined) as never }) })} />
     </div>
   )
