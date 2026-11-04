@@ -15,7 +15,7 @@ export function ActiveUserSelect() {
       <span aria-hidden="true" className="grid size-6 shrink-0 place-items-center rounded-full bg-brand text-xs font-semibold text-white">
         {initial ?? '?'}
       </span>
-      <label htmlFor={id} className="whitespace-nowrap text-xs font-medium text-zinc-500">Working as</label>
+      <label htmlFor={id} className="whitespace-nowrap text-xs font-medium text-zinc-600">Working as</label>
       <UserSelect id={id} size="sm" bare placeholder="Nobody" value={activeUserId ?? ''}
         onChange={(e) => setActiveUserId((e.target.value || null) as UserId | null)} />
     </div>
