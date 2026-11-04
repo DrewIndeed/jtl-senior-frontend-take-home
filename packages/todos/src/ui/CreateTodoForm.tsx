@@ -23,11 +23,15 @@ export function CreateTodoForm({ renderAssigneeField, defaultAssigneeId }: Props
   const mutation = useCreateTodo()
   // Don't let "Added …" sit next to a later "Deleted … Undo": clear after 4s or when a toggle/delete starts.
   const client = useQueryClient()
+  const lastOtherWrite = useRef(0)
   useEffect(
     () =>
       client.getMutationCache().subscribe((e) => {
         const key = e.mutation?.options.mutationKey
-        if (e.type === 'added' && key?.[0] === todoKeys.all[0] && (key[1] === 'toggle' || key[1] === 'delete')) setStatus('')
+        if (e.type === 'added' && key?.[0] === todoKeys.all[0] && (key[1] === 'toggle' || key[1] === 'delete')) {
+          lastOtherWrite.current = Date.now()
+          setStatus('')
+        }
       }),
     [client],
   )
@@ -53,8 +57,10 @@ export function CreateTodoForm({ renderAssigneeField, defaultAssigneeId }: Props
     setStatus(`Adding “${input.title}”…`)
     setTitle('')
     titleRef.current?.focus()
+    const submittedAt = Date.now()
     mutation.mutate(input, {
-      onSuccess: () => setStatus(`Added “${input.title}”.`),
+      // Skip "Added …" if a toggle/delete started meanwhile, so it never sits next to "Deleted … Undo".
+      onSuccess: () => setStatus(lastOtherWrite.current >= submittedAt ? '' : `Added “${input.title}”.`),
       onError: (err) => {
         setStatus('')
         setRollback({ title: input.title, detail: err.message })
