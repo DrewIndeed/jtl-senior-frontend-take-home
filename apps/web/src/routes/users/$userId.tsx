@@ -51,7 +51,7 @@ function UserDetail() {
   const onDeleted = (deleted: User) => {
     queryClient.removeQueries({ queryKey: todoKeys.byAssignee(deleted.id) })
     if (activeUserId === deleted.id) setActiveUserId(null)
-    void navigate({ to: '/' })
+    void navigate({ to: '/', state: { deletedUser: deleted.username } })
   }
   return (
     <div className="flex flex-col gap-6">
