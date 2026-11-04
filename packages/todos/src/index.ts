@@ -2,3 +2,4 @@ export { todoKeys, todosByAssigneeQueryOptions, type TodoRow } from './model/key
 export { useCreateTodo } from './model/useCreateTodo'
 export { CreateTodoForm } from './ui/CreateTodoForm'
 export { TodoList } from './ui/TodoList'
+export { useToggleTodo, useDeleteTodo } from './model/useTodoWrites'
