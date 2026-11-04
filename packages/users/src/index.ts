@@ -2,3 +2,5 @@ export { userKeys, userQueryOptions, usersQueryOptions, useUsers, useCreateUser 
 export { CreateUserForm } from './ui/CreateUserForm'
 export { UserCard } from './ui/UserCard'
 export { UserSelect } from './ui/UserSelect'
+export { useDeleteUser } from './model/queries'
+export { DeleteUserButton } from './ui/DeleteUserButton'

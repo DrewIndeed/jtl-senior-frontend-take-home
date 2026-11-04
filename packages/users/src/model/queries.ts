@@ -1,6 +1,6 @@
 import { queryOptions, useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import type { User, UserId } from '@jtl/shared'
-import { createUser, fetchUser, fetchUsers } from '../api/users-api'
+import { createUser, deleteUser, fetchUser, fetchUsers } from '../api/users-api'
 
 export const userKeys = {
   all: ['users'] as const,
@@ -19,6 +19,18 @@ export function useCreateUser() {
     mutationFn: createUser,
     onSuccess: (user: User) => {
       client.setQueryData(userKeys.detail(user.id), user)
+      return client.invalidateQueries({ queryKey: userKeys.list() })
+    },
+  })
+}
+
+/** Users-side cache only. Cross-feature cleanup (their to-dos, the active user) is the app's job. */
+export function useDeleteUser() {
+  const client = useQueryClient()
+  return useMutation({
+    mutationFn: deleteUser,
+    onSuccess: (_d, id) => {
+      client.removeQueries({ queryKey: userKeys.detail(id) })
       return client.invalidateQueries({ queryKey: userKeys.list() })
     },
   })
