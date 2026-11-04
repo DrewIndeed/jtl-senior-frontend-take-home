@@ -41,6 +41,25 @@ Every build step in order. Times are UTC+7. Hashes are the commits on `main`.
 | 14:33 | — | **Boundary check:** temporarily added `import { UserCard } from '@jtl/users'` to `packages/todos`. `eslint src` → `error '@jtl/users' import is restricted … Feature packages must not depend on each other` (1 error). Reverted. | Proves the lint rule works. |
 | 14:33 | — | `pnpm build` passed. `pnpm dev --port 5199` booted; `GET /` → 200; then stopped. Gzipped chunks: app entry 76.7 KB, router/link 21.4 KB, others 26.5 / 10.0 KB, MSW browser worker 159.8 KB (demo only). | |
 | 14:34 | 80dd914, cd3e358 | README: run steps, split table, trade-offs (ownership, rollback design + `useMutationState` alternative, Zod, MSW, routing), cuts, honest time, reflection (3 perf, 3 testing). | Brief deliverables. |
-| 14:38 | aa0bfe6 … d5f9302 | ai-journey: `plan.md` (approved plan as-is, recruiter names and email draft removed), `reviews/`, `decisions.md`, `prompts.md`, `toolchain.md`, `judgment.md`. | Required, and weighed like the code. |
-| 14:40 | — | Clean re-run from an empty `node_modules`: `pnpm install --frozen-lockfile` ✅, `pnpm typecheck` ✅ 4/4, `pnpm lint` ✅ 4/4, `pnpm test` ✅ 2/2, `pnpm build` ✅. | Final verification before push. |
-| 14:40 | — | **Cut:** Playwright (not trivially cheap: browser download plus config), deploy, failure panel, design-system look. **Not verified by hand:** clicking through the UI in a real browser, including the `?fail=` flow (verified only by the automated tests and the dev-server boot). | Honest scope. |
+| 14:34 | aa0bfe6 … d5f9302 | ai-journey: `plan.md` (approved plan as-is, recruiter names and email draft removed), `reviews/`, `decisions.md`, `prompts.md`, `toolchain.md`, `judgment.md`. | Required, and weighed like the code. |
+| 14:34 | — | Clean re-run from an empty `node_modules`: `pnpm install --frozen-lockfile` ✅, `pnpm typecheck` ✅ 4/4, `pnpm lint` ✅ 4/4, `pnpm test` ✅ 2/2, `pnpm build` ✅. | Final verification before push. |
+| 14:34 | — | **Cut:** Playwright (not trivially cheap: browser download plus config), deploy, failure panel, design-system look. **Not verified by hand:** clicking through the UI in a real browser, including the `?fail=` flow (verified only by the automated tests and the dev-server boot). | Honest scope. |
+
+## Design review fix pass (Uma's single batched review, applied in one pass)
+_Times below are git commit times. The earlier rows above at 14:38/14:40 were corrected to 14:34, the time of the last build commit `a39ce19`._
+
+| Time | Commit | What changed | Why |
+|---|---|---|---|
+| 14:43 | 5a336f8 | `@source "../../../packages";` in `index.css`. | P0: Tailwind v4 wasn't scanning the packages, so the feature UI was unstyled. Missed by every automated check (see `judgment.md` #9). |
+| 14:43 | e584fdb | A 409 sets the username field error and focuses the input. Removed the separate alert. | P0: `aria-invalid` stayed false and focus stayed on body. |
+| 14:43 | 4d625f4 | Separate `role=alert` rollback box ("Couldn't save … We removed it from the list. Try again."). Raw server message only in dev, via a new `isDev` helper in shared (avoids vite types in feature packages). | P0: the rollback must be clear and announced assertively. |
+| 14:44 | dd0094d | `min-h-11` on nav links and inputs. | P1: 44px tap targets. |
+| 14:44 | e09ce89 | Pending row: dashed border, readable text, pulsing dot, sr-only "(saving)". `opacity-60` removed. | P1: contrast. |
+| 14:44 | 95e5599 | Unknown user: h1 "User not found" + "Back to users". Retry uses the shared `Button` inside a red alert box (`alertBoxClass` in shared). | P1: axe `page-has-heading-one`, accessible retry. |
+| 14:44 | 96d48ef | Empty state: a dashed box with a hint. | Optional. |
+| 14:44 | 89a09d2 | Home: a bordered divided card with full-row links, and the "Create a user" primary link next to the h1. | P1. |
+| 14:44 | 452708e | Field error rendered before the hint, with a ⚠ icon (aria-hidden) and medium weight. | Optional. |
+| 14:44 | 7789d65 | Header picker `w-full sm:w-auto`, larger gap. | Optional: 390 px layout. |
+| 14:45 | 449828c | README: real build times from git, and measured bundle (app-only ≈ 139 KB gz, with mock ≈ 293 KB gz, env-flag gate noted). | Honesty fixes (see `judgment.md` #10, #11). |
+| 14:45 | ab091c1, 3be847f | `reviews/uma-design-a11y-review.md`, D23 (`@jtl/*` scope, reason not recorded), D24 (mock on the first-load path), judgment entries, key prompt. | Logging. |
+| 14:46 | — | Clean re-run: `pnpm install --frozen-lockfile` ✅, `pnpm typecheck` ✅ 4/4, `pnpm lint` ✅ 4/4, `pnpm test` ✅ 2/2 (no test changes needed), `pnpm build` ✅. **Not verified:** the fixed UI in a real browser (no browser available to the build agent). | |
