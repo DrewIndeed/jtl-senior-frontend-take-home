@@ -51,8 +51,10 @@ export const handlers = [
   http.post('/api/todos', async ({ request }) => {
     await latency()
     if (shouldFail('todos.create')) return HttpResponse.json({ message: 'Server error (simulated)' }, { status: 500 })
-    const parsed = CreateTodoInputSchema.safeParse(await request.json())
+    const body = (await request.json()) as Record<string, unknown>
+    const parsed = CreateTodoInputSchema.safeParse(body)
     if (!parsed.success || !db.getUser(parsed.data.assigneeId)) return HttpResponse.json({ message: 'Invalid to-do' }, { status: 400 })
-    return HttpResponse.json(db.addTodo(parsed.data.title, parsed.data.assigneeId as never), { status: 201 })
+    const index = typeof body.index === 'number' ? body.index : undefined
+    return HttpResponse.json(db.addTodo(parsed.data.title, parsed.data.assigneeId as never, index), { status: 201 })
   }),
 ]

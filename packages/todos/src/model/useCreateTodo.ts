@@ -19,12 +19,12 @@ export function useCreateTodo() {
   return useMutation({
     mutationKey,
     mutationFn: createTodo,
-    onMutate: async (input: CreateTodoInput, { client }) => {
+    onMutate: async (input: CreateTodoInput & { index?: number }, { client }) => {
       const key = todoKeys.byAssignee(input.assigneeId)
       await client.cancelQueries({ queryKey: key })
       const tempId = `temp-${crypto.randomUUID()}`
       const row: TodoRow = { id: tempId, title: input.title, assigneeId: input.assigneeId, done: false, createdAt: new Date().toISOString(), pending: true }
-      client.setQueryData<TodoRow[]>(key, (rows) => insertPending(rows, row))
+      client.setQueryData<TodoRow[]>(key, (rows) => insertPending(rows, row, input.index))
       return { key, tempId }
     },
     onError: (_err, _input, result, { client }) => {

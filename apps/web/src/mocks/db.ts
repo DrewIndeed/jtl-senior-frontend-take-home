@@ -27,9 +27,13 @@ export const db = {
     return user
   },
   todosFor: (assigneeId: string) => todos.filter((t) => t.assigneeId === assigneeId),
-  addTodo: (title: string, assigneeId: UserId) => {
+  /** `index` (optional) is a mock-only restore hint: position within this assignee's list. */
+  addTodo: (title: string, assigneeId: UserId, index?: number) => {
     const todo: Todo = { id: nextId('t'), title, assigneeId, done: false, createdAt: new Date().toISOString() }
-    todos = [...todos, todo]
+    const mine = todos.filter((t) => t.assigneeId === assigneeId)
+    const before = index === undefined ? undefined : mine[index]
+    const at = before ? todos.indexOf(before) : todos.length
+    todos = [...todos.slice(0, at), todo, ...todos.slice(at)]
     return todo
   },
   updateTodo: (id: string, patch: Partial<Pick<Todo, 'done'>>) => {
