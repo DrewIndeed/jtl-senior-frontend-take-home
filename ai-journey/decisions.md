@@ -16,7 +16,7 @@ Condensed from my Decision Guide (D1–D22, written during planning). Each line 
 | D10 | Jotai: one atom, the active user id | Cross-cutting UI state; never server data | Persisted to localStorage, which is a small extra |
 | D11 | Plain Tailwind v4 | Required. The design-system package wasn't asked for | Less polish |
 | D12 | Zod | One schema for form, API parse and mock | One dependency (~tens of KB) |
-| D13 | A11y basics | Labels, `aria-describedby`, `aria-invalid`, focus on the first error, `role=status` live region for optimistic/rollback, skip link, 44px buttons | No axe run yet (see reflection) |
+| D13 | A11y basics | Labels, `aria-describedby`, `aria-invalid`, focus on the first error, `role=status` live region for optimistic/rollback, skip link, 40px controls (36px in the header/toolbar; WCAG 2.5.8 asks for 24px) | No axe run yet (see reflection) |
 | D14 | MSW + `?fail=todos.create` | Network-level mock, so data-access code is production code. Reviewers can see the rollback | Service worker setup; the worker chunk is large |
 | D15 | 2 Vitest tests | The key signal (overlap + rollback) and validation | Rest is outlined, not built |
 | D16 | Playwright | **Cut** (4h cap) | — |

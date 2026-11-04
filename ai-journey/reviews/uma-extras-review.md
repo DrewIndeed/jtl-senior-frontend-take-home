@@ -14,3 +14,6 @@ Batched review by the design-review agent. Screenshots stayed on the review box.
 
 ## Round 4: filter visuals
 Per Uma, Andrew found the filters confusing (the active tab was too subtle and the tabs, the "Working as" picker and an empty status line competed for attention). Fixes: solid dark active tab with plain-text counts, one toolbar row (heading and picker left, tabs right), the Undo status line moved below the list and visually hidden when empty, and "Working as" restyled as an identity chip. axe found 0 violations on `/todos?status=open` and `/users/u1?status=done` at 1440 and 390 px.
+
+## Round 5: controls
+Andrew flagged the dropdowns as too tall and plain. Fixes: one shared `Select` (native `<select>`, so labels and keyboard behaviour stay; custom chevron; 40px in forms, 36px in the toolbar and header), inputs and the primary button at 40px (WCAG 2.5.8 asks for 24px), a compact assignee picker in the toolbar row, and the "Working as" chip with an avatar initial. One deviation: the chip label is zinc-600, not zinc-500, because axe flagged 4.39:1 contrast.
