@@ -1,5 +1,5 @@
 import { useRef, useState, type FormEvent, type ReactNode } from 'react'
-import { Button, CreateTodoInputSchema, Field, fieldErrors, inputClass, type UserId } from '@jtl/shared'
+import { Button, CreateTodoInputSchema, isDev, Field, fieldErrors, inputClass, type UserId } from '@jtl/shared'
 import { useCreateTodo } from '../model/useCreateTodo'
 
 type AssigneeFieldProps = { id: string; value: string; onChange: (id: string) => void; 'aria-invalid': boolean; 'aria-describedby'?: string }
@@ -15,6 +15,7 @@ export function CreateTodoForm({ renderAssigneeField, defaultAssigneeId }: Props
   const [assigneeId, setAssigneeId] = useState<string>(defaultAssigneeId ?? '')
   const [errors, setErrors] = useState<Record<string, string>>({})
   const [status, setStatus] = useState('')
+  const [rollback, setRollback] = useState<{ title: string; detail: string } | null>(null)
   const titleRef = useRef<HTMLInputElement>(null)
   const assigneeRef = useRef<HTMLDivElement>(null)
   const mutation = useCreateTodo()
@@ -30,13 +31,17 @@ export function CreateTodoForm({ renderAssigneeField, defaultAssigneeId }: Props
       return
     }
     setErrors({})
+    setRollback(null)
     const input = { title: parsed.data.title, assigneeId: parsed.data.assigneeId as UserId }
     setStatus(`Adding “${input.title}”…`)
     setTitle('')
     titleRef.current?.focus()
     mutation.mutate(input, {
       onSuccess: () => setStatus(`Added “${input.title}”.`),
-      onError: (err) => setStatus(`Could not add “${input.title}”: ${err.message}. It was removed from the list.`),
+      onError: (err) => {
+        setStatus('')
+        setRollback({ title: input.title, detail: err.message })
+      },
     })
   }
 
@@ -51,6 +56,12 @@ export function CreateTodoForm({ renderAssigneeField, defaultAssigneeId }: Props
         </Field>
       </div>
       <Button type="submit">Add to-do</Button>
+      {rollback && (
+        <p role="alert" className="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-800">
+          Couldn’t save “{rollback.title}”. We removed it from the list. Try again.
+          {isDev && <span className="block text-xs text-red-700">Server: {rollback.detail}</span>}
+        </p>
+      )}
       <p role="status" aria-live="polite" className="text-sm text-slate-700">{status}</p>
     </form>
   )
