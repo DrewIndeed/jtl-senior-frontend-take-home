@@ -2,9 +2,23 @@
   "name": "@jtl/users",
   "private": true,
   "type": "module",
-  "exports": { ".": "./src/index.ts" },
-  "scripts": { "typecheck": "tsc -p .", "lint": "eslint src" },
-  "dependencies": { "@jtl/shared": "workspace:*", "@tanstack/react-query": "5.105.3", "zod": "4.6.7" },
-  "peerDependencies": { "react": "19.3.1" },
-  "devDependencies": { "@types/react": "19.3.0", "react": "19.3.1" }
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc -p .",
+    "lint": "eslint src"
+  },
+  "dependencies": {
+    "@jtl/shared": "workspace:*",
+    "@tanstack/react-query": "5.105.3",
+    "zod": "4.6.7"
+  },
+  "peerDependencies": {
+    "react": "19.3.1"
+  },
+  "devDependencies": {
+    "@types/react": "19.3.0",
+    "react": "19.3.1"
+  }
 }

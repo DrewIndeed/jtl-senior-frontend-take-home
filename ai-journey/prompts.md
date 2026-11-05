@@ -3,6 +3,7 @@
 These are in the order I gave them. **[real]** prompts are my own words, translated faithfully into English where I wrote in Vietnamese. **[reconstructed]** marks steps that ran as part of an automated agent run where I gave no separate prompt. For those I wrote the prompt I would have given for that step, so the reasoning can be followed. Each prompt's outcome is in `journal.md`.
 
 ## Planning (chief-of-staff agent)
+
 1. **[real]** "Investigate this to prepare it strategically, and always keep diary-style notes step by step: https://github.com/jtl-software/take-home-tasks. Only do the frontend, okay? We passed the round-1 interview, so this is the take-home. Think it through really carefully, then give me the best plan. Make it something genuinely distinctive, then ask Uma to polish the UI/UX to perfection (Uma is really good), and for technical questions just ask Sofia."
 2. **[real]** "Make the plan and the journal into two pages for me to view. Keep your own copies to work from, but I need pages to read."
 3. **[real]** "Also add my prompts to the journal. Where they relate to a journal section, log them there. Not every prompt, but log the original prompt verbatim."
@@ -13,10 +14,12 @@ These are in the order I gave them. **[real]** prompts are my own words, transla
 _Decisions by Andrew in prompts 5–6: no hosted demo/deploy, no Platform UI package, to-do list in both places, hard 4h cap (no going over), no AI for the presentation, submit when done._
 
 ## Technical review (code-review agent)
+
 7. **[reconstructed]** "Review this plan as a senior frontend engineer before I approve it. Is the stack right for a 2–4h scope? Should I pin jotai/msw 3 or 2.x? Check on npm. Is the optimistic rollback correct when two creates overlap? Fact-check the decision records against the official docs via Context7. What's missing or risky?"
 8. **[real]** "'Not checked against official docs'? Check it against them now." → _Requested by Andrew:_ the `isMutating === 1` rule was verified by a script against query-core 5.105.3 (`reviews/sofia-plan-review.md` §6).
 
 ## Build (code agent on my machine)
+
 9. **[real]** "I approve the plan, go ahead. My home machine is still on, so just use it for speed. Remember this part: 'An ai-journey/ folder documenting how you used AI … This is required and weighs significantly in the evaluation.' I know you'll mostly automate things, so there won't be many key prompts. Where I have no prompt, write the English prompt yourself to fill the 'key prompts'. And remember to log all the changes, the code, the steps and the decisions fully, so I understand."
 10. **[real]** "Remember to clone the repo so I can view it in GitHub Desktop."
 11. **[real, relayed]** "[…] Push after every commit or small batch, and update the journal as you go."
@@ -28,8 +31,10 @@ _Decisions by Andrew in prompts 5–6: no hosted demo/deploy, no Platform UI pac
 17. **[reconstructed]** "Prove the boundary rule: add a todos → users import, run lint, capture the error, revert."
 
 ## Design review fix pass
+
 18. **[reconstructed]** "Apply Uma's batched design and a11y review in one pass: the P0s first (Tailwind not scanning packages, the 409 error on the field with focus, a clear rollback alert), then the P1s and the cheap optional items. Keep the commits small, keep the tests green, push once at the end, and log the review, the fixes and what the AI missed."
 
 ## Extras (minimal)
+
 19. **[real, translated]** "Then just do it minimalist." _Decision by Andrew: extras beyond the brief stay minimal (D25)._
 20. **[reconstructed]** "Add only: PATCH/DELETE to-do and DELETE user (cascade) in MSW with fail flags; an optimistic toggle checkbox and delete with per-item rollback and a simple Undo in the existing status area; user delete behind a native &lt;dialog&gt;, with cross-feature cleanup in apps/web and the active user cleared; a URL ?status= filter with counts; slate→zinc plus one brand token. No new tests, no toasts, push once."

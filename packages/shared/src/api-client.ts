@@ -1,9 +1,12 @@
-import type { z } from 'zod'
+import type { z } from 'zod';
 
 export class ApiError extends Error {
-  constructor(public readonly status: number, message: string) {
-    super(message)
-    this.name = 'ApiError'
+  constructor(
+    public readonly status: number,
+    message: string
+  ) {
+    super(message);
+    this.name = 'ApiError';
   }
 }
 
@@ -11,15 +14,23 @@ export class ApiError extends Error {
 export async function apiRequest<S extends z.ZodType>(
   schema: S,
   path: string,
-  init?: RequestInit,
+  init?: RequestInit
 ): Promise<z.infer<S>> {
-  const res = await fetch(new URL(path, globalThis.location?.origin ?? 'http://localhost'), {
-    ...init,
-    headers: { 'content-type': 'application/json', ...init?.headers },
-  })
+  const res = await fetch(
+    new URL(path, globalThis.location?.origin ?? 'http://localhost'),
+    {
+      ...init,
+      headers: { 'content-type': 'application/json', ...init?.headers },
+    }
+  );
   if (!res.ok) {
-    const body = (await res.json().catch(() => null)) as { message?: string } | null
-    throw new ApiError(res.status, body?.message ?? `Request failed (${res.status})`)
+    const body = (await res.json().catch(() => null)) as {
+      message?: string;
+    } | null;
+    throw new ApiError(
+      res.status,
+      body?.message ?? `Request failed (${res.status})`
+    );
   }
-  return schema.parse(res.status === 204 ? undefined : await res.json())
+  return schema.parse(res.status === 204 ? undefined : await res.json());
 }
